@@ -1,84 +1,80 @@
 <?php
-function deleteRecord($id) {
+
+function getConnection() {
     $servername = "localhost";
     $username = "root";
     $password = "";
     $dbname = "users1";
 
-
     $conn = new mysqli($servername, $username, $password, $dbname);
-
 
     if ($conn->connect_error) {
         die("Ошибка подключения: " . $conn->connect_error);
     }
 
+    return $conn;
+}
 
-    $sql = "DELETE FROM `name` WHERE id = ?";
+function executeSQL($conn, $sql, $params = null) {
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $id);
 
-
-    if ($stmt->execute()) {
-        echo "Запись успешно удалена.";
-    } else {
-        echo "Ошибка: " . $stmt->error;
+    if ($params) {
+        $stmt->bind_param($params['types'], ...$params['values']);
     }
 
-    // Закрытие соединения
-    $stmt->close();
+    if ($stmt->execute()) {
+        return $stmt;
+    } else {
+        return false;
+    }
+}
+
+function closeConnection($conn) {
     $conn->close();
 }
-?>
 
-<?php
-function insertRecord($data) {
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "users1";
+function deleteRecord($id) {
+    $conn = getConnection();
+    $sql = "DELETE FROM `name` WHERE id = ?";
+    $params = array('types' => 'i', 'values' => array($id));
 
-    $conn = new mysqli($servername, $username, $password, $dbname);
+    $stmt = executeSQL($conn, $sql, $params);
 
-    if ($conn->connect_error) {
-        die("Ошибка подключения: " . $conn->connect_error);
+    if ($stmt) {
+        echo "Запись успешно удалена.";
+    } else {
+        echo "Ошибка: " . $conn->error;
     }
 
-    $sql = "INSERT INTO `name` (last_name, first_name, middle_name, age) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssi", $data['last_name'], $data['first_name'], $data['middle_name'], $data['age']);
+    closeConnection($conn);
+}
 
-    if ($stmt->execute()) {
+function insertRecord($data) {
+    $conn = getConnection();
+    $sql = "INSERT INTO `name` (last_name, first_name, middle_name, age) VALUES (?, ?, ?, ?)";
+    $params = array('types' => 'sssi', 'values' => array($data['last_name'], $data['first_name'], $data['middle_name'], $data['age']));
+
+    $stmt = executeSQL($conn, $sql, $params);
+
+    if ($stmt) {
         echo "Новая запись успешно добавлена.";
     } else {
         echo "Ошибка при добавлении записи: " . $conn->error;
     }
 
-    $stmt->close();
-    $conn->close();
+    closeConnection($conn);
 }
 
-
-
 function getTableRows($minAge = 0) {
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "users1";
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    if ($conn->connect_error) {
-        die("Ошибка подключения: " . $conn->connect_error);
-    }
-
+    $conn = getConnection();
     $sql = "SELECT * FROM `name` WHERE age >= ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $minAge);
+    $params = array('types' => 'i', 'values' => array($minAge));
+
+    $stmt = executeSQL($conn, $sql, $params);
 
     $rows = array();
 
-    if ($stmt->execute()) {
+    if ($stmt) {
         $result = $stmt->get_result();
         if ($result) {
             while ($row = $result->fetch_assoc()) {
@@ -95,7 +91,8 @@ function getTableRows($minAge = 0) {
         }
     }
 
-    $conn->close();
+    closeConnection($conn);
     return $rows;
 }
 
+?>
