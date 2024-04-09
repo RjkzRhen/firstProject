@@ -2,16 +2,7 @@
 include_once '../db/db.php';
 
 if (isset($_POST['submit'])) {
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "users1";
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    if ($conn->connect_error) {
-        die("Ошибка подключения: " . $conn->connect_error);
-    }
+    $conn = getConnection();
 
     $last_name = $_POST['last_name'];
     $first_name = $_POST['first_name'];
