@@ -10,7 +10,7 @@ if (isset($_POST['update'])) {
         'middle_name' => $_POST['middle_name'],
         'age' => $_POST['age']
     );
-    insertRecord($data); 
+    insertRecord($data);
     header("Location: index.php");
     exit;
 }
@@ -33,7 +33,7 @@ if (isset($_POST['update'])) {
     <input type="text" id="middle_name" name="middle_name" value=""><br>
     <label for="age">Возраст:</label>
     <input type="number" id="age" name="age" value=""><br>
-    <input type="submit" name="update" value="Добавить"> <!-- Изменил значение кнопки на "Добавить" -->
+    <input type="submit" name="update" value="Добавить">
 </form>
 </body>
 </html>
