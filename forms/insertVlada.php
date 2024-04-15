@@ -1,15 +1,14 @@
 <?php
-
+include_once '../db/db.php';
 function getTemplate(): array
 {
     return [
         ['id' => 'last_name', 'name' => 'last_name', 'label' => 'Фамилия', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
-        ['id' => 'first_name', 'name' => 'first_name', 'label' => 'Имя', 'type' => 'text', 'value' =>  '', 'required' => true, 'isValid' => true],
+        ['id' => 'first_name', 'name' => 'first_name', 'label' => 'Имя', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
         ['id' => 'middle_name', 'name' => 'middle_name', 'label' => 'Отчество', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
         ['id' => 'age', 'name' => 'age', 'label' => 'Возраст', 'type' => 'number', 'value' => '', 'required' => true, 'isValid' => true]
     ];
 }
-
 
 function getDataFromFormAndUpdateTemplate(): array
 {
@@ -32,15 +31,28 @@ function getDataFromFormAndUpdateTemplate(): array
 }
 
 function isAllValid(array $dataTemplate): bool
-{ foreach ($dataTemplate as $field) {
-    if (!$field['isValid']) {
-        return false;
+{
+    foreach ($dataTemplate as $field) {
+        if (!$field['isValid']) {
+            return false;
+        }
     }
-}
     return true;
 }
 
-function insertIntoTable(array $dataTemplate): void
+function insertIntoTable(array $dataTemplate, $con): void
 {
+    $columns = implode(", ", array_map(function($item) {
+        return "`" . $item['name'] . "`";
+    }, $dataTemplate));
 
+    $values = implode(", ", array_map(function($item) use ($con) {
+        return "'" . $con->real_escape_string($item['value']) . "'";
+    }, $dataTemplate));
+
+    $sql = "INSERT INTO `name` ($columns) VALUES ($values)";
+
+    if (!$con->query($sql)) {
+        echo "Ошибка: " . $sql . "<br>" . $con->error;
+    }
 }
