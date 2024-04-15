@@ -30,10 +30,9 @@ function getDataFromFormAndUpdateTemplate(): array
     return $result;
 }
 
-function isAllValid(array $dataTemplate): bool
-{
+function isAllValid(array $dataTemplate): bool {
     foreach ($dataTemplate as $field) {
-        if (!$field['isValid']) {
+        if ($field['required'] && empty($field['value'])) {
             return false;
         }
     }
@@ -52,7 +51,11 @@ function insertIntoTable(array $dataTemplate, $con): void
 
     $sql = "INSERT INTO `name` ($columns) VALUES ($values)";
 
-    if (!$con->query($sql)) {
+    if ($con->query($sql)) {
+
+        header("Location: ../data/index.php");
+        exit;
+    } else {
         echo "Ошибка: " . $sql . "<br>" . $con->error;
     }
 }

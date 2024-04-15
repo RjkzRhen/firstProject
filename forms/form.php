@@ -31,16 +31,7 @@ include_once '../forms/insertVlada.php';
     } else {
         $fields = getTemplate();
     }
-    if (empty($errors)) {
-    $sql = "INSERT INTO `name` (last_name, first_name, middle_name, age) VALUES (?, ?, ?, ?)";
-    $conn = getConnection();
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssss", $values['last_name'], $values['first_name'], $values['middle_name'], $values['age']);
-    $stmt->execute();
 
-    header("Location: ../data/index.php");
-    exit;
-    }
     foreach ($fields as $field) {
         $class = $field['isValid'] ? "req" : "error";
         echo '<label for="' . $field['id'] . '">' . $field['label'] . ':</label>';
