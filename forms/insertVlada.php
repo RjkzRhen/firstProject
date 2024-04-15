@@ -32,8 +32,12 @@ function getDataFromFormAndUpdateTemplate(): array
 }
 
 function isAllValid(array $dataTemplate): bool
-{
-
+{ foreach ($dataTemplate as $field) {
+    if (!$field['isValid']) {
+        return false;
+    }
+}
+    return true;
 }
 
 function insertIntoTable(array $dataTemplate): void
