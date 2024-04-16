@@ -31,14 +31,10 @@ function getDataFromFormAndUpdateTemplate(): array
 }
 
 function isAllValid(array $dataTemplate): bool {
-    foreach ($dataTemplate as $field) {
-        if ($field['required'] && empty($field['value'])) {
-            return false;
-        }
-    }
-    return true;
+    return array_reduce($dataTemplate, function($isValid, $field) {
+        return $isValid && (!$field['required'] || !empty($field['value']));
+    }, true);
 }
-
 function insertIntoTable(array $dataTemplate, $con): void
 {
     $columns = implode(", ", array_map(function($item) {
