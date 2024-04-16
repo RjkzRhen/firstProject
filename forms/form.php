@@ -29,6 +29,7 @@ include_once '../forms/insertVlada.php';
             $con = getConnection();
             insertIntoTable($fields, $con);
         }
+
     } else {
         $fields = getTemplate();
     }
