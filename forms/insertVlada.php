@@ -1,5 +1,6 @@
 <?php
 include_once '../db/db.php';
+
 function getTemplate(): array
 {
     return [

@@ -4,6 +4,7 @@ include_once '../db/db.php';
 $minAge = isset($_GET['minAge']) ? (int)$_GET['minAge'] : 0;
 $tableRows = getTableRows($minAge);
 
+
 function displayTable($tableRows) {
     echo "<table>";
     echo "<tr><th>ID</th><th>Фамилия</th><th>Имя</th><th>Отчество</th><th>Возраст</th><th>Действия</th></tr>";
