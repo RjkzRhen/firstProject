@@ -1,6 +1,5 @@
 <?php
 include_once '../db/db.php';
-
 function getTemplate(): array
 {
     return [
@@ -10,11 +9,9 @@ function getTemplate(): array
         ['id' => 'age', 'name' => 'age', 'label' => 'Возраст', 'type' => 'number', 'value' => '', 'required' => true, 'isValid' => true]
     ];
 }
-
 function getDataFromFormAndUpdateTemplate(): array
 {
     $fields = getTemplate();
-
     $result = [];
     foreach ($fields as $field) {
         if (empty($_POST[$field['name']])) {
@@ -24,28 +21,24 @@ function getDataFromFormAndUpdateTemplate(): array
             $field['value'] = $_POST[$field['name']];
             $field['isValid'] = true;
         }
-
         $result[] = $field;
     }
-
     return $result;
 }
 
 function isAllValid(array $dataTemplate): bool {
     $isValid = true;
-
     array_walk($dataTemplate, function(&$field) use (&$isValid) {
         if ($field['required'] && empty($field['value'])) {
             $field['isValid'] = false;
         } else {
             $field['isValid'] = true;
         }
-
         $isValid = $isValid && $field['isValid'];
     });
-
     return $isValid;
 }
+
 function insertIntoTable(array $dataTemplate, $con): void
 {
     $columns = implode(", ", array_map(function($item) {
