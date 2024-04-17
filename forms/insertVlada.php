@@ -32,9 +32,13 @@ function getDataFromFormAndUpdateTemplate(): array
 }
 
 function isAllValid(array $dataTemplate): bool {
-    return array_reduce($dataTemplate, function($isValid, $field) {
-        return $isValid && (!$field['required'] || !empty($field['value']));
-    }, true);
+    $isValid = true;
+    array_walk($dataTemplate, function($field) use (&$isValid) {
+        if ($field['required'] && empty($field['value'])) {
+            $isValid = false;
+        }
+    });
+    return $isValid;
 }
 function insertIntoTable(array $dataTemplate, $con): void
 {
