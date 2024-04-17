@@ -9,6 +9,7 @@ function getTemplate(): array
         ['id' => 'age', 'name' => 'age', 'label' => 'Возраст', 'type' => 'number', 'value' => '', 'required' => true, 'isValid' => true]
     ];
 }
+
 function getDataFromFormAndUpdateTemplate(): array
 {
     $fields = getTemplate();
