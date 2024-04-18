@@ -28,8 +28,6 @@ function getDataFromFormAndUpdateTemplate(): array
 }
 
 function isAllValid(array $dataTemplate): bool {
-    $isValid = true;
-
     foreach ($dataTemplate as &$field) {
         if ($field['required'] && empty($field['value'])) {
             $field['isValid'] = false;
@@ -37,12 +35,12 @@ function isAllValid(array $dataTemplate): bool {
             $field['isValid'] = true;
         }
 
-        $isValid = $isValid && $field['isValid'];
+        if (!$field['isValid']) {
+            return false;
+        }
     }
-
-    return $isValid;
+    return true;
 }
-
 function insertIntoTable(array $dataTemplate, $con): void
 {
     $columns = implode(", ", array_map(function($item) {
