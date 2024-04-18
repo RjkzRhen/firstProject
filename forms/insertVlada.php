@@ -41,6 +41,7 @@ function isAllValid(array $dataTemplate): bool {
     }
     return true;
 }
+
 function insertIntoTable(array $dataTemplate, $con): void
 {
     $columns = implode(", ", array_map(function($item) {
