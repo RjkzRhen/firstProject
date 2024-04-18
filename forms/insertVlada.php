@@ -29,14 +29,17 @@ function getDataFromFormAndUpdateTemplate(): array
 
 function isAllValid(array $dataTemplate): bool {
     $isValid = true;
-    array_walk($dataTemplate, function(&$field) use (&$isValid) {
+
+    foreach ($dataTemplate as &$field) {
         if ($field['required'] && empty($field['value'])) {
             $field['isValid'] = false;
         } else {
             $field['isValid'] = true;
         }
+
         $isValid = $isValid && $field['isValid'];
-    });
+    }
+
     return $isValid;
 }
 
