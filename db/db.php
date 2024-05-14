@@ -16,19 +16,16 @@ function getConnection() {
 }
 
 function executeSQL($conn, $sql, $params = null) {
-    $stmt = $conn->prepare($sql);
+    $stmt = $conn->prepare($sql) or die("Ошибка при подготовке запроса: " . $conn->error);
 
     if ($params) {
         $stmt->bind_param($params['types'], ...$params['values']);
     }
 
-    if ($stmt->execute()) {
-        return $stmt;
-    } else {
-        return false;
-    }
-}
+    $stmt->execute() or die("Ошибка при выполнении запроса: " . $stmt->error);
 
+    return $stmt;
+}
 function closeConnection($conn) {
     $conn->close();
 }
@@ -69,32 +66,23 @@ function getTableRows($minAge = 0) {
     $conn = getConnection();
     $sql = "SELECT * FROM `name` WHERE age >= ?";
     $params = array('types' => 'i', 'values' => array($minAge));
-
     $stmt = executeSQL($conn, $sql, $params);
-
     $rows = array();
-
-    if ($stmt) {
-        $result = $stmt->get_result();
-        if ($result) {
-            while ($row = $result->fetch_assoc()) {
-                $ageClass = $row['age'] > 50 ? 'age-over-50' : '';
-                $rows[] = array(
-                    'id' => $row['id'],
-                    'last_name' => $row['last_name'],
-                    'first_name' => $row['first_name'],
-                    'middle_name' => $row['middle_name'],
-                    'age' => $row['age'],
-                    'ageClass' => $ageClass
-                );
-            }
+    if ($stmt && $result = $stmt->get_result()) {
+        while ($row = $result->fetch_assoc()) {
+            $ageClass = $row['age'] > 50 ? 'age-over-50' : '';
+            $rows[] = array(
+                'id' => $row['id'],
+                'last_name' => $row['last_name'],
+                'first_name' => $row['first_name'],
+                'middle_name' => $row['middle_name'],
+                'age' => $row['age'],
+                'ageClass' => $ageClass
+            );
         }
     }
 
     closeConnection($conn);
     return $rows;
 }
-
-
-
 ?>

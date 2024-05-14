@@ -1,11 +1,14 @@
 <?php
+include_once '../db/db.php';
 
-include '../db/db.php';
-
-
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
+function deleteRecordById($id) {
     deleteRecord($id);
     header("Location: index.php");
     exit;
 }
+
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+    deleteRecordById($id);
+}
+?>
