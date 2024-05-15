@@ -1,5 +1,6 @@
 <?php
 include_once '../db/db.php';
+
 function getTemplate(): array
 {
     return [
@@ -26,7 +27,6 @@ function getDataFromFormAndUpdateTemplate(): array
     }
     return $result;
 }
-
 function isAllValid(array $dataTemplate): bool {
     foreach ($dataTemplate as &$field) {
         if ($field['required'] && empty($field['value'])) {
@@ -41,7 +41,6 @@ function isAllValid(array $dataTemplate): bool {
     }
     return true;
 }
-
 function insertIntoTable(array $dataTemplate, $con): void
 {
     $columns = implode(", ", array_map(function($item) {

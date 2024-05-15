@@ -1,7 +1,5 @@
 <?php
-
 include_once '../db/db.php';
-
 if (isset($_POST['update'])) {
     $data = array(
         'id' => $_POST['id'],
@@ -11,15 +9,11 @@ if (isset($_POST['update'])) {
         'age' => $_POST['age']
 
     );
-
     insertRecord($data);
     header("Location: index.php");
     exit;
-
 }
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>

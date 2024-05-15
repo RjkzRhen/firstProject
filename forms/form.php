@@ -1,10 +1,7 @@
 <?php
-
 include_once '../db/db.php';
 include_once '../forms/insert.php';
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -88,7 +85,6 @@ include_once '../forms/insert.php';
             $('input.req').addClass('req');
         });
     });
-
 </script>
 </body>
 </html>

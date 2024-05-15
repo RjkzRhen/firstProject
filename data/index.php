@@ -3,7 +3,6 @@ include_once '../db/db.php';
 
 $minAge = filter_input(INPUT_GET, 'minAge', FILTER_VALIDATE_INT) ?? 0;
 $tableRows = getTableRows($minAge);
-
 function displayTable($tableRows) {
     echo "<table>";
     echo "<tr><th>ID</th><th>Фамилия</th><th>Имя</th><th>Отчество</th><th>Возраст</th><th>Действия</th></tr>";
@@ -22,7 +21,6 @@ function displayTable($tableRows) {
     echo "</table>";
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,8 +89,6 @@ function displayTable($tableRows) {
     <input type="number" id="minAge" name="minAge" value="<?= $minAge ?>">
     <input type="submit" value="Фильтровать">
 </form>
-
 <?php displayTable($tableRows); ?>
-
 </body>
 </html>

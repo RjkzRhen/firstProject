@@ -1,6 +1,5 @@
 <?php
 include_once '../db/db.php';
-
 function deleteRecordById($id) {
     deleteRecord($id);
     header("Location: index.php");

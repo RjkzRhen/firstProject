@@ -45,7 +45,6 @@ function deleteRecord($id) {
 
     closeConnection($conn);
 }
-
 function insertRecord($data) {
     $conn = getConnection();
     $sql = "INSERT INTO `name` (last_name, first_name, middle_name, age) VALUES (?, ?, ?, ?)";
