@@ -1,6 +1,6 @@
 <?php
 
-include '../db/db.php';
+include_once '../db/db.php';
 
 if (isset($_POST['update'])) {
     $data = array(
@@ -9,11 +9,15 @@ if (isset($_POST['update'])) {
         'first_name' => $_POST['first_name'],
         'middle_name' => $_POST['middle_name'],
         'age' => $_POST['age']
+
     );
+
     insertRecord($data);
     header("Location: index.php");
     exit;
+
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -80,3 +84,4 @@ if (isset($_POST['update'])) {
 </form>
 </body>
 </html>
+
