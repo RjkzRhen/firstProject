@@ -88,6 +88,7 @@ include_once '../forms/insertVlada.php';
             $('input.req').addClass('req');
         });
     });
+
 </script>
 </body>
 </html>
