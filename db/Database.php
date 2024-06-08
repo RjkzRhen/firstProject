@@ -1,14 +1,25 @@
 <?php
 
 class Database {
-    private $conn;
+    public $conn;
 
     public function __construct() {
-        $this->conn = new mysqli("localhost", "root", "", "users1");
+        $this->conn = $this->getConnection();
+    }
 
-        if ($this->conn->connect_error) {
-            die("Ошибка подключения: " . $this->conn->connect_error);
+    private function getConnection() {
+        $servername = "localhost";
+        $username = "root";
+        $password = "";
+        $dbname = "users1";
+
+        $conn = new mysqli($servername, $username, $password, $dbname);
+
+        if ($conn->connect_error) {
+            die("Ошибка подключения: " . $conn->connect_error);
         }
+
+        return $conn;
     }
 
     public function executeSQL($sql, $params = null) {

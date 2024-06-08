@@ -1,6 +1,8 @@
 <?php
-include_once '../db/db.php';
-include_once '../forms/insert.php';
+include_once '../forms/InsertForm.php';
+
+$insertForm = new InsertForm();
+$fields = $insertForm->handleRequest();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -59,17 +61,6 @@ include_once '../forms/insert.php';
 <body>
 <form action="form.php" method="post" id="userForm">
     <?php
-    if (isset($_POST['submit'])) {
-        $fields = getDataFromFormAndUpdateTemplate();
-        if (isAllValid($fields)) {
-            $con = getConnection();
-            insertIntoTable($fields, $con);
-        }
-
-    } else {
-        $fields = getTemplate();
-    }
-
     foreach ($fields as $field) {
         $class = $field['isValid'] ? "req" : "error";
         echo '<label for="' . $field['id'] . '">' . $field['label'] . ':</label>';

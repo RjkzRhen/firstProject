@@ -1,17 +1,50 @@
 <?php
-include_once '../db/db.php';
-if (isset($_POST['update'])) {
-    $data = array(
-        'id' => $_POST['id'],
-        'last_name' => $_POST['last_name'],
-        'first_name' => $_POST['first_name'],
-        'middle_name' => $_POST['middle_name'],
-        'age' => $_POST['age']
+include_once '../db/Database.php';
 
-    );
-    insertRecord($data);
-    header("Location: index.php");
-    exit;
+class InsertRecord {
+    private $db;
+
+    public function __construct() {
+        $this->db = new Database();
+    }
+
+    public function insertRecord($data) {
+        $sql = "INSERT INTO `name` (last_name, first_name, middle_name, age) VALUES (?, ?, ?, ?)";
+        $params = array('types' => 'sssi', 'values' => array($data['last_name'], $data['first_name'], $data['middle_name'], $data['age']));
+        $stmt = $this->executeSQL($sql, $params);
+
+        if ($stmt) {
+            header("Location: index.php");
+            exit;
+        } else {
+            echo "Ошибка при добавлении записи: " . $this->db->conn->error;
+        }
+    }
+
+    private function executeSQL($sql, $params) {
+        $stmt = $this->db->conn->prepare($sql) or die("Ошибка при подготовке запроса: " . $this->db->conn->error);
+
+        if ($params) {
+            $stmt->bind_param($params['types'], ...$params['values']);
+        }
+
+        $stmt->execute() or die("Ошибка при выполнении запроса: " . $stmt->error);
+
+        return $stmt;
+    }
+
+    public function handleRequest() {
+        if (isset($_POST['update'])) {
+            $data = array(
+                'id' => $_POST['id'],
+                'last_name' => $_POST['last_name'],
+                'first_name' => $_POST['first_name'],
+                'middle_name' => $_POST['middle_name'],
+                'age' => $_POST['age']
+            );
+            $this->insertRecord($data);
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -64,16 +97,15 @@ if (isset($_POST['update'])) {
     </style>
 </head>
 <body>
-<form action="" method="post">
-    <input type="hidden" name="id" value="ID_записи_для_изменения">
+<form method="post">
     <label for="last_name">Фамилия:</label>
-    <input type="text" id="last_name" name="last_name" value="" required><br>
+    <input type="text" id="last_name" name="last_name" required><br>
     <label for="first_name">Имя:</label>
-    <input type="text" id="first_name" name="first_name" value="" required><br>
+    <input type="text" id="first_name" name="first_name" required><br>
     <label for="middle_name">Отчество:</label>
-    <input type="text" id="middle_name" name="middle_name" value="" required><br>
+    <input type="text" id="middle_name" name="middle_name" required><br>
     <label for="age">Возраст:</label>
-    <input type="number" id="age" name="age" value="" required><br>
+    <input type="number" id="age" name="age" required><br>
     <input type="submit" name="update" value="Обновить">
 </form>
 </body>

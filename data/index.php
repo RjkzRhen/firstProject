@@ -1,24 +1,69 @@
 <?php
-include_once '../db/db.php';
+include_once '../db/Database.php';
 
-$minAge = filter_input(INPUT_GET, 'minAge', FILTER_VALIDATE_INT) ?? 0;
-$tableRows = getTableRows($minAge);
-function displayTable($tableRows) {
-    echo "<table>";
-    echo "<tr><th>ID</th><th>Фамилия</th><th>Имя</th><th>Отчество</th><th>Возраст</th><th>Действия</th></tr>";
-    foreach ($tableRows as $row) {
-        $ageClass = $row['age'] > 50 ? 'age-over-50' : '';
-        echo "<tr>";
-        echo "<td>{$row['id']}</td>";
-        echo "<td>{$row['last_name']}</td>";
-        echo "<td>{$row['first_name']}</td>";
-        echo "<td>{$row['middle_name']}</td>";
-        echo "<td class=\"$ageClass\">{$row['age']}</td>";
-        echo "<td><a href='delete.php?id={$row['id']}'>Удалить</a></td>";
-        echo "<td><a href='insertRecord.php?id={$row['id']}'>Добавить еще</a></td>";
-        echo "</tr>";
+class Index {
+    private $db;
+    public $minAge;
+
+    public function __construct() {
+        $this->db = new Database();
+        $this->minAge = filter_input(INPUT_GET, 'minAge', FILTER_VALIDATE_INT) ?? 0;
     }
-    echo "</table>";
+
+    private function getTableRows(): array {
+        $sql = "SELECT * FROM `name` WHERE age >= ?";
+        $params = array('types' => 'i', 'values' => array($this->minAge));
+        $stmt = $this->executeSQL($sql, $params);
+        $rows = array();
+        if ($stmt && $result = $stmt->get_result()) {
+            while ($row = $result->fetch_assoc()) {
+                $ageClass = $row['age'] > 50 ? 'age-over-50' : '';
+                $rows[] = array(
+                    'id' => $row['id'],
+                    'last_name' => $row['last_name'],
+                    'first_name' => $row['first_name'],
+                    'middle_name' => $row['middle_name'],
+                    'age' => $row['age'],
+                    'ageClass' => $ageClass
+                );
+            }
+        }
+        return $rows;
+    }
+
+    private function executeSQL($sql, $params) {
+        $stmt = $this->db->conn->prepare($sql) or die("Ошибка при подготовке запроса: " . $this->db->conn->error);
+
+        if ($params) {
+            $stmt->bind_param($params['types'], ...$params['values']);
+        }
+
+        $stmt->execute() or die("Ошибка при выполнении запроса: " . $stmt->error);
+
+        return $stmt;
+    }
+
+    public function displayTable() {
+        $tableRows = $this->getTableRows();
+        echo "<table>";
+        echo "<tr><th>ID</th><th>Фамилия</th><th>Имя</th><th>Отчество</th><th>Возраст</th><th>Действия</th></tr>";
+        foreach ($tableRows as $row) {
+            echo "<tr>";
+            echo "<td>{$row['id']}</td>";
+            echo "<td>{$row['last_name']}</td>";
+            echo "<td>{$row['first_name']}</td>";
+            echo "<td>{$row['middle_name']}</td>";
+            echo "<td class=\"{$row['ageClass']}\">{$row['age']}</td>";
+            echo "<td><a href='delete.php?id={$row['id']}'>Удалить</a></td>";
+            echo "<td><a href='insertRecord.php?id={$row['id']}'>Добавить еще</a></td>";
+            echo "</tr>";
+        }
+        echo "</table>";
+    }
+
+    public function handleRequest() {
+        $this->minAge = filter_input(INPUT_GET, 'minAge', FILTER_VALIDATE_INT) ?? 0;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -84,11 +129,17 @@ function displayTable($tableRows) {
     </style>
 </head>
 <body>
+<?php
+$index = new Index();
+$index->handleRequest();
+?>
 <form action="" method="get">
     <label for="minAge">Минимальный возраст:</label>
-    <input type="number" id="minAge" name="minAge" value="<?= $minAge ?>">
+    <input type="number" id="minAge" name="minAge" value="<?= $index->minAge ?>">
     <input type="submit" value="Фильтровать">
 </form>
-<?php displayTable($tableRows); ?>
+<?php
+$index->displayTable();
+?>
 </body>
 </html>
