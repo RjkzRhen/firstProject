@@ -61,7 +61,6 @@ class InsertForm {
             echo "Ошибка: " . $sql . "<br>" . $con->error;
         }
     }
-
     public function handleRequest() {
         if (isset($_POST['submit'])) {
             $fields = $this->getDataFromFormAndUpdateTemplate();
@@ -75,5 +74,4 @@ class InsertForm {
         return $fields;
     }
 }
-
 ?>

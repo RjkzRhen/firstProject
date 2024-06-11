@@ -63,7 +63,6 @@ class Database {
             echo "Ошибка при добавлении записи: " . $this->conn->error;
         }
     }
-
     public function getTableRows($minAge = 0) {
         $sql = "SELECT * FROM `name` WHERE age >= ?";
         $params = array('types' => 'i', 'values' => array($minAge));
@@ -85,5 +84,4 @@ class Database {
         return $rows;
     }
 }
-
 ?>

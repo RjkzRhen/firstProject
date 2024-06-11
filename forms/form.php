@@ -5,7 +5,6 @@ include_once '../forms/InsertForm.php';
 $insertForm = new InsertForm();
 $fields = $insertForm->handleRequest();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>

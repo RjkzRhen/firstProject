@@ -4,12 +4,10 @@ include_once '../db/Database.php';
 class Index {
     private $db;
     public $minAge;
-
     public function __construct() {
         $this->db = new Database();
         $this->minAge = filter_input(INPUT_GET, 'minAge', FILTER_VALIDATE_INT) ?? 0;
     }
-
     private function getTableRows(): array {
         $sql = "SELECT * FROM `name` WHERE age >= ?";
         $params = array('types' => 'i', 'values' => array($this->minAge));
@@ -30,7 +28,6 @@ class Index {
         }
         return $rows;
     }
-
     private function executeSQL($sql, $params) {
         $stmt = $this->db->conn->prepare($sql) or die("Ошибка при подготовке запроса: " . $this->db->conn->error);
 

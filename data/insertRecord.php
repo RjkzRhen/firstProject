@@ -3,11 +3,9 @@ include_once '../db/Database.php';
 
 class InsertRecord {
     private $db;
-
     public function __construct() {
         $this->db = new Database();
     }
-
     public function insertRecord($data) {
         $sql = "INSERT INTO `name` (last_name, first_name, middle_name, age) VALUES (?, ?, ?, ?)";
         $params = array('types' => 'sssi', 'values' => array($data['last_name'], $data['first_name'], $data['middle_name'], $data['age']));
@@ -20,8 +18,6 @@ class InsertRecord {
             echo "Ошибка при добавлении записи: " . $this->db->conn->error;
         }
     }
-
-
     private function executeSQL($sql, $params) {
         $stmt = $this->db->conn->prepare($sql) or die("Ошибка при подготовке запроса: " . $this->db->conn->error);
 
@@ -33,7 +29,6 @@ class InsertRecord {
 
         return $stmt;
     }
-
     public function handleRequest() {
         if (isset($_POST['update'])) {
             $data = array(
