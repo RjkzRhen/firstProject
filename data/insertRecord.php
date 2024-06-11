@@ -21,6 +21,7 @@ class InsertRecord {
         }
     }
 
+
     private function executeSQL($sql, $params) {
         $stmt = $this->db->conn->prepare($sql) or die("Ошибка при подготовке запроса: " . $this->db->conn->error);
 

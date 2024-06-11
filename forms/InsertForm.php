@@ -75,4 +75,5 @@ class InsertForm {
         return $fields;
     }
 }
+
 ?>

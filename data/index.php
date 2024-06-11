@@ -65,6 +65,7 @@ class Index {
         $this->minAge = filter_input(INPUT_GET, 'minAge', FILTER_VALIDATE_INT) ?? 0;
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
