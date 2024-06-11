@@ -54,7 +54,7 @@ class Index {
             echo "<td>{$row['first_name']}</td>";
             echo "<td>{$row['middle_name']}</td>";
             echo "<td class=\"{$row['ageClass']}\">{$row['age']}</td>";
-            echo "<td><a href='delete.php?id={$row['id']}'>Удалить</a></td>";
+            echo "<td><a href='DeletePage.php?id={$row['id']}'>Удалить</a></td>";
             echo "<td><a href='insertRecord.php?id={$row['id']}'>Добавить еще</a></td>";
             echo "</tr>";
         }
