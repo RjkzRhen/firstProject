@@ -2,6 +2,7 @@
 include_once '../db/Database.php';
 
 class InsertRecord {
+
     private $db;
     public function __construct() {
         $this->db = new Database();
