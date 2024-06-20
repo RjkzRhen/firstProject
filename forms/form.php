@@ -1,6 +1,5 @@
 <?php
-include_once '../forms/InsertForm.php';
-
+include_once 'InsertForm.php';
 
 $insertForm = new InsertForm();
 $fields = $insertForm->handleRequest();

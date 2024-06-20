@@ -1,17 +1,19 @@
 <?php
+require_once 'Config.php';
 
 class Database {
-    public $conn;
+    public ?mysqli $conn;
 
     public function __construct() {
         $this->conn = $this->getConnection();
     }
 
     private function getConnection() {
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "users1";
+        $config = new Config('config.ini'); // Создаем объект класса Config
+        $servername = $config->get('database', 'servername');
+        $username = $config->get('database', 'username');
+        $password = $config->get('database', 'password');
+        $dbname = $config->get('database', 'dbname');
 
         $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -21,6 +23,7 @@ class Database {
 
         return $conn;
     }
+
 
     public function executeSQL($sql, $params = null) {
         $stmt = $this->conn->prepare($sql) or die("Ошибка при подготовке запроса: " . $this->conn->error);
@@ -63,7 +66,8 @@ class Database {
             echo "Ошибка при добавлении записи: " . $this->conn->error;
         }
     }
-    public function getTableRows($minAge = 0) {
+    public function getTableRows($minAge = 0): array
+    {
         $sql = "SELECT * FROM `name` WHERE age >= ?";
         $params = array('types' => 'i', 'values' => array($minAge));
         $stmt = $this->executeSQL($sql, $params);
