@@ -11,7 +11,6 @@ class InsertForm {
             ['id' => 'age', 'name' => 'age', 'label' => 'Возраст', 'type' => 'number', 'value' => '', 'required' => true, 'isValid' => true]
         ];
     }
-
     public function getDataFromFormAndUpdateTemplate(): array {
         $fields = $this->getTemplate();
         $result = [];
@@ -27,7 +26,6 @@ class InsertForm {
         }
         return $result;
     }
-
     public function isAllValid(array $dataTemplate): bool {
         foreach ($dataTemplate as &$field) {
             if ($field['required'] && empty($field['value'])) {
@@ -42,7 +40,6 @@ class InsertForm {
         }
         return true;
     }
-
     public function insertIntoTable(array $dataTemplate, $con): void {
         $columns = implode(", ", array_map(function($item) {
             return "`" . $item['name'] . "`";
