@@ -1,6 +1,16 @@
 <?php
-include_once '../db/Database.php';
 
+include_once __DIR__ . '/../db/Database.php';
+require_once __DIR__ . '/../config/Config.php';
+include_once __DIR__ . '/../forms/form.php';
+use config\Config;
+
+$config = new Config('config.ini');
+$db = new Database($config);
+
+/**
+ * @method getDataFromFormAndUpdateTableTemplate()
+ */
 class InsertForm {
 
     public function getTemplate(): array {
@@ -52,17 +62,23 @@ class InsertForm {
         $sql = "INSERT INTO `name` ($columns) VALUES ($values)";
 
         if ($con->query($sql)) {
-            header("Location: ../data/index.php");
+            header("Location: /table");
             exit;
         } else {
             echo "Ошибка: " . $sql . "<br>" . $con->error;
         }
     }
-    public function handleRequest() {
+
+    /**
+     * @throws Exception
+     */
+    public function handleRequest(): array
+    {
         if (isset($_POST['submit'])) {
             $fields = $this->getDataFromFormAndUpdateTemplate();
             if ($this->isAllValid($fields)) {
-                $db = new Database();
+                $config = new Config(__DIR__ . '/../config.ini');
+                $db = new Database($config);
                 $this->insertIntoTable($fields, $db->conn);
             }
         } else {
@@ -71,4 +87,3 @@ class InsertForm {
         return $fields;
     }
 }
-?>
