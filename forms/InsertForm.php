@@ -74,16 +74,19 @@ class InsertForm {
      */
     public function handleRequest(): array
     {
-        if (isset($_POST['submit'])) {
-            $fields = $this->getDataFromFormAndUpdateTemplate();
-            if ($this->isAllValid($fields)) {
-                $config = new Config(__DIR__ . '/../config.ini');
-                $db = new Database($config);
-                $this->insertIntoTable($fields, $db->conn);
+        if (isset($_POST['submit'])) { // Проверяет, была ли отправлена форма
+            $fields = $this->getDataFromFormAndUpdateTemplate(); // Извлекает и обновляет данные формы
+            if ($this->isAllValid($fields)) { // Проверяет, все ли поля в $fields валидны
+                $config = new Config(__DIR__ . '/../config.ini');  // Создает объект конфигурации, загружая настройки из файла config.ini
+                $db = new Database($config); // Создает объект базы данных, используя настройки из $config
+                $this->insertIntoTable($fields, $db->conn); // Вставляет данные $fields в таблицу базы данных
             }
         } else {
-            $fields = $this->getTemplate();
+            $fields = $this->getTemplate(); // Получает шаблон формы с пустыми значениями, если форма не отправлена
         }
-        return $fields;
+        return $fields; // Возвращает поля формы
     }
 }
+/*
+ * handleRequest
+ */

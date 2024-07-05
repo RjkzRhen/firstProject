@@ -14,12 +14,7 @@ class Table {
         $this->db = $db;
         $this->minAge = isset($_GET['minAge']) ? intval($_GET['minAge']) : 0;
     }
-    public function handleRequest(): void
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-            echo $this->db->getTable($this->minPax);
-        }
-    }
+
     public function getHtml(): string {
         $html = "<!DOCTYPE html>\n";
         $html .= "<html lang='en'>\n";

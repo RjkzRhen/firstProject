@@ -13,7 +13,7 @@ if ($searchInPage) {
     $result = match ($request) {
         '/table' => (new Table(new Database(new Config('config.ini'))))->getHtml(),
         '/' => (new HomePage())->getHtml(),
-        '/form' => (new \forms\Form(new Database(new Config('config.ini'))))->handleRequest(),
+        '/form' => (new \forms\Form(new Database(new Config('config.ini'))))->getHtml(),
         default => "404 Not Found"
     };
     if (isset($_GET['deleteId'])) {
@@ -24,6 +24,3 @@ if ($searchInPage) {
 
         echo $result;
 }
-/*
- * handleRequest делает то то то возвращает то
- */

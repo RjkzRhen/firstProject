@@ -11,21 +11,25 @@ class Form {
     private InsertForm $insertForm;
     private Database $db;
 
+    private array $fields;
+
     public function __construct(Database $db) {
         $this->db = $db;
         $this->insertForm = new InsertForm();
-    }
-
-    public function handleRequest(): string
-    {
         $fields = $this->insertForm->handleRequest();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $this->insertForm->isAllValid($fields)) {
-            $this->insertForm->insertIntoTable($fields, $this->db->conn);
-        }
-        return $this->render($fields);
+        $this->fields = $fields;  // Сохраняем поля для использования в getHtml()
     }
 
-    private function render(array $fields): string {
+   // public function getHtml(): string
+   // {
+   //     $fields = $this->insertForm->handleRequest(); // Отправляет запрос к insertForm для обработки формы и получает поля формыМ
+    //      if ($_SERVER['REQUEST_METHOD'] === 'POST' && $this->insertForm->isAllValid($fields)) { // Проверяет все ли поля формы валидны в методе POST
+    //          $this->insertForm->insertIntoTable($fields, $this->db->conn);// Если условия выполнены, вставляет данные формы в таблицу базы данных
+    //      }
+    //     return $this->render($fields); // ОТПРАВЛЯЕТ ДАННЫЕ НА HTML-страницу, используя данные формы;
+    // }
+
+    public function getHtml(): string {
         $html = '<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <title>Добавление пользователя</title>
@@ -42,7 +46,7 @@ class Form {
     </head>
     <body>
     <form action="/form" method="post" id="userForm">';
-        foreach ($fields as $field) {
+        foreach ($this->fields as $field) {
             $class = $field['isValid'] ? "req" : "error";
             $html .= '<label for="' . $field['id'] . '">' . $field['label'] . ':</label>';
             $html .= '<input type="' . $field['type'] . '" id="' . $field['id'] . '" name="' . $field['name'] . '" value="' . $field['value'] .'" class="'.$class.'"><br>';
