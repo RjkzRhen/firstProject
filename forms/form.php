@@ -15,8 +15,8 @@ class Form {
 
     public function __construct(Database $db) {
         $this->db = $db;
-        $this->insertForm = new InsertForm();
-        $fields = $this->insertForm->handleRequest();
+        $this->insertForm = new InsertForm(); // Создание нового объекта InsertForm и присваивание его свойству объекта
+        $fields = $this->insertForm->handleRequest(); // Вызов метода handleRequest объекта insertForm для обработки формы и получения данных
         $this->fields = $fields;  // Сохраняем поля для использования в getHtml()
     }
 
