@@ -1,9 +1,7 @@
 <?php
-
-include_once __DIR__ . '/../db/Database.php';
-require_once __DIR__ . '/../config/Config.php';
-include_once __DIR__ . '/../forms/form.php';
+namespace forms;
 use config\Config;
+use db\Database;
 
 $config = new Config('config.ini');
 $db = new Database($config);
@@ -36,20 +34,7 @@ class InsertForm {
         }
         return $result;
     }
-    public function isAllValid(array $dataTemplate): bool {
-        foreach ($dataTemplate as &$field) {
-            if ($field['required'] && empty($field['value'])) {
-                $field['isValid'] = false;
-            } else {
-                $field['isValid'] = true;
-            }
 
-            if (!$field['isValid']) {
-                return false;
-            }
-        }
-        return true;
-    }
     public function insertIntoTable(array $dataTemplate, $con): void {
         $columns = implode(", ", array_map(function($item) {
             return "`" . $item['name'] . "`";
@@ -76,11 +61,7 @@ class InsertForm {
     {
         if (isset($_POST['submit'])) { // Проверяет, была ли отправлена форма
             $fields = $this->getDataFromFormAndUpdateTemplate(); // Извлекает и обновляет данные формы
-            if ($this->isAllValid($fields)) { // Проверяет, все ли поля в $fields валидны
-                $config = new Config(__DIR__ . '/../config.ini');  // Создает объект конфигурации, загружая настройки из файла config.ini
-                $db = new Database($config); // Создает объект базы данных, используя настройки из $config
-                $this->insertIntoTable($fields, $db->conn); // Вставляет данные $fields в таблицу базы данных
-            }
+
         } else {
             $fields = $this->getTemplate(); // Получает шаблон формы с пустыми значениями, если форма не отправлена
         }

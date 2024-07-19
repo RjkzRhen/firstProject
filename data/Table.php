@@ -1,12 +1,14 @@
 <?php
 
-include_once __DIR__ . '/../db/Database.php';
-require_once __DIR__ . '/../config/Config.php';
+namespace data;
+
+use db\Database;
+use PageInterface;
 
 /**
  * @property $minPax
  */
-class Table {
+class Table implements PageInterface {
     private Database $db;
     private int $minAge;
 

@@ -1,13 +1,10 @@
 <?php
 namespace forms;
 
-use Database;
-use InsertForm;
-
-include_once __DIR__ . '/../db/Database.php';
-
-require_once __DIR__ . '/../config/Config.php';
-class Form {
+use db\Database;
+use forms\InsertForm;
+use PageInterface;
+class Form implements PageInterface {
     private InsertForm $insertForm;
     private Database $db;
 
@@ -16,19 +13,27 @@ class Form {
     public function __construct(Database $db) {
         $this->db = $db;
         $this->insertForm = new InsertForm(); // Создание нового объекта InsertForm и присваивание его свойству объекта
-        $fields = $this->insertForm->handleRequest(); // Вызов метода handleRequest объекта insertForm для обработки формы и получения данных
-        $this->fields = $fields;  // Сохраняем поля для использования в getHtml()
+        $this->fields = $this->insertForm->handleRequest();
+        if ($this->isAllValid($this->fields)) {
+            $this->insertForm->insertIntoTable($this->fields, $this->db->conn);
+        }
+
     }
 
-   // public function getHtml(): string
-   // {
-   //     $fields = $this->insertForm->handleRequest(); // Отправляет запрос к insertForm для обработки формы и получает поля формыМ
-    //      if ($_SERVER['REQUEST_METHOD'] === 'POST' && $this->insertForm->isAllValid($fields)) { // Проверяет все ли поля формы валидны в методе POST
-    //          $this->insertForm->insertIntoTable($fields, $this->db->conn);// Если условия выполнены, вставляет данные формы в таблицу базы данных
-    //      }
-    //     return $this->render($fields); // ОТПРАВЛЯЕТ ДАННЫЕ НА HTML-страницу, используя данные формы;
-    // }
+    public function isAllValid(array $dataTemplate): bool {
+        foreach ($dataTemplate as &$field) {
+            if ($field['required'] && empty($field['value'])) {
+                $field['isValid'] = false;
+            } else {
+                $field['isValid'] = true;
+            }
 
+            if (!$field['isValid']) {
+                return false;
+            }
+        }
+        return true;
+    }
     public function getHtml(): string {
         $html = '<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">

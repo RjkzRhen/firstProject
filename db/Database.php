@@ -1,10 +1,10 @@
 <?php
-
+namespace db;
 use config\Config;
+use mysqli;
+use mysqli_stmt;
 
 
-require_once __DIR__ . '/../config/Config.php';
-include_once __DIR__ . '/../forms/InsertForm.php';
 $config = new Config('config.ini');
 $db = new Database($config);
 class Database {
