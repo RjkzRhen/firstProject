@@ -1,10 +1,12 @@
 <?php
 include 'autoload.php';
+require_once 'data/CSVTable.php';
 
 use config\Config;
 use data\HomePage;
 use data\Table;
 use db\Database;
+use data\CSVTable;
 
 
 $request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -20,13 +22,14 @@ if ($searchInPage) {
     }
 
     echo $result->getHtml();
+
 }
 
 function router(string $uri): PageInterface
 {
     return match ($uri) {
         '/table' => (new Table(new Database(new Config('config.ini')))),
-        '/tableTwo' => (new Table(new Database(new Config('config.ini')))),
+        '/csv' => (new CSVTable('otherFiles/OpenDocument.csv')),
         '/' => (new HomePage()),
         '/form' => (new \forms\Form(new Database(new Config('config.ini')))),
         default => new NotFoundHttp()
