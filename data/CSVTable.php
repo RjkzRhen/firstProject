@@ -16,6 +16,11 @@ class CSVTable implements PageInterface { // Определение класса
         if ($this->csvData === false) { // Проверка успешности загрузки файла
             throw new Exception("Ошибка при открытии" . $filePath); // Генерация исключения в случае ошибки
         }
+        array_walk($this->csvData, function (&$line) {
+            $detectedEncoding = mb_detect_encoding($line, array('Windows-1251', 'ISO-8859-1', 'UTF-8'), true);
+            $line = mb_convert_encoding($line, 'UTF-8', $detectedEncoding);
+        });
+
     }
 
 

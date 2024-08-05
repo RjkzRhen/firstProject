@@ -1,6 +1,5 @@
 <?php
 include 'autoload.php';
-require_once 'data/CSVTable.php';
 
 use config\Config;
 use data\HomePage;
