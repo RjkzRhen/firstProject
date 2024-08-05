@@ -1,53 +1,80 @@
 <?php
 namespace data; // Определяет пространство имен для класса CSVTable
 use Exception; // Импортирует класс Exception для обработки исключений
-use PageInterface; // Использует интерфейс PageInterface для обеспечения совместимости класса CSVTable
+use PageInterface;
+use TableStyles;
 
 class CSVTable implements PageInterface { // Определение класса CSVTable, который реализует интерфейс PageInterface
     private $filePath; // Приватное свойство для хранения пути к файлу CSV
     private array|false $csvData; // Приватное свойство для хранения данных из CSV файла или false в случае ошибки
 
+    private \data\TableStyles $styles;
+
     /**
      * @throws Exception
      */
-    public function __construct($filePath) { // Конструктор класса, инициализирующий объект с путем к файлу CSV
-        $this->filePath = $filePath; // Присваивание значения свойству filePath
-        $this->csvData = file($this->filePath); // Загрузка файла CSV и присвоение данных свойству csvData
-        if ($this->csvData === false) { // Проверка успешности загрузки файла
-            throw new Exception("Ошибка при открытии" . $filePath); // Генерация исключения в случае ошибки
+    public function __construct($filePath, \data\TableStyles $styles) {
+        $this->filePath = $filePath;
+        $this->styles = $styles;
+        $this->csvData = file($this->filePath);
+
+        if ($this->csvData === false) {
+            throw new Exception("Error opening file: " . $filePath);
         }
+        array_walk($this->csvData, function (&$line) {
+            $detectedEncoding = mb_detect_encoding($line, ['Windows-1251', 'ISO-8859-1', 'UTF-8'], true);
+            if ($detectedEncoding !== 'UTF-8') {
+                $line = mb_convert_encoding($line, 'UTF-8', $detectedEncoding);
+            }
+            $line = str_getcsv($line, ';'); // Convert CSV string to array after encoding adjustment
+        });
+        echo '<pre>';
+        print_r($this->csvData);
+        echo '</pre>';
+
     }
 
 
-    public function readCsv(): array { // Метод для чтения данных из CSV файла и возвращения их в виде массива
-        $rows = []; // Инициализация пустого массива для хранения строк данных
-        foreach ($this->csvData as $line) { // Цикл по строкам данных файла
-            $rows[] = str_getcsv($line); // Преобразование строки в массив и добавление в список строк
+    public function readCsv(): array {
+        $rows = [];
+        foreach ($this->csvData as $line) {
+            // Convert each line from a CSV string to an array
+            if (is_string($line)) {
+                $rows[] = str_getcsv($line, ";");
+            }
         }
-        return $rows; // Возвращение списка строк как результат работы метода
+        return $rows;
     }
 
-    public function getHtml(): string { // Метод для генерации HTML кода таблицы на основе данных CSV
-        $data = $this->readCsv(); // Получение данных из CSV файла методом readCsv
+
+    public function getHtml(): string {
+        $data = $this->readCsv(); // Загрузка данных
         $html = "<!DOCTYPE html>\n";
         $html .= "<html lang='en'>\n";
         $html .= "<head>\n";
         $html .= "<meta charset='UTF-8'>\n";
         $html .= "<title>CSV Table</title>\n";
+        $html .= $this->styles->getStyles(); // Получение стилей
         $html .= "</head>\n";
         $html .= "<body>\n";
-        $html .= "<table border='1'>\n";
-        foreach ($data as $row) {
-            $html .= "<tr>\n";
-            foreach ($row as $cell) {
-                $html .= "<td>" . htmlspecialchars($cell) . "</td>\n";
+        $html .= "<table>\n";
+        $html .= "<tr>\n";
+        foreach ($data[0] as $header) {
+            $html .= "<th>" . htmlspecialchars($header) . "</th>\n"; // Добавление заголовков
+        }
+        $html .= "</tr>\n";
+        for ($i = 1; $i < count($data); $i++) {
+            if (count($data[$i]) == count($data[0])) { // Проверка на полноту данных
+                $html .= "<tr>\n";
+                foreach ($data[$i] as $cell) {
+                    $html .= "<td>" . htmlspecialchars($cell) . "</td>\n"; // Добавление данных
+                }
+                $html .= "</tr>\n";
             }
-            $html .= "</tr>\n";
         }
         $html .= "</table>\n";
         $html .= "</body>\n";
         $html .= "</html>";
-        return $html; // Возврат сформированного HTML кода как результат работы метода
+        return $html;
     }
-
 }

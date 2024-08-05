@@ -1,10 +1,10 @@
 <?php
 include 'autoload.php';
-require_once 'data/CSVTable.php';
 
 use config\Config;
 use data\HomePage;
 use data\Table;
+use data\TableStyles;
 use db\Database;
 use data\CSVTable;
 
@@ -27,9 +27,10 @@ if ($searchInPage) {
 
 function router(string $uri): PageInterface
 {
+    $styles = new \data\TableStyles();
     return match ($uri) {
         '/table' => (new Table(new Database(new Config('config.ini')))),
-        '/csv' => (new CSVTable('otherFiles/OpenDocument.csv')),
+        '/csv' => (new CSVTable('otherFiles/OpenDocument.csv' , $styles)),
         '/' => (new HomePage()),
         '/form' => (new \forms\Form(new Database(new Config('config.ini')))),
         default => new NotFoundHttp()

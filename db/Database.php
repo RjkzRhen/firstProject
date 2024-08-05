@@ -24,9 +24,10 @@ class Database {
 
         if ($conn->connect_error) {
             die("Ошибка подключения: " . $conn->connect_error);
+            $this->conn->set_charset("utf8");
         }
-
         return $conn;
+
     }
 
     public function executeSQL($sql, $params = null): false|mysqli_stmt
