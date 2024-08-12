@@ -65,6 +65,7 @@ class CSVTable implements PageInterface { // Определение класса
         return $html;
     }
 
+
     private function getStyle(): string {
         return "<style>
         body {
