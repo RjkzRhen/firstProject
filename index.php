@@ -27,10 +27,10 @@ if ($searchInPage) {
 
 function router(string $uri): PageInterface
 {
-    $styles = new \data\TableStyles();
+
     return match ($uri) {
         '/table' => (new Table(new Database(new Config('config.ini')))),
-        '/csv' => (new CSVTable('otherFiles/OpenDocument.csv' , $styles)),
+        '/csv' => (new CSVTable('otherFiles/OpenDocument.csv')),
         '/' => (new HomePage()),
         '/form' => (new \forms\Form(new Database(new Config('config.ini')))),
         default => new NotFoundHttp()
