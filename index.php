@@ -4,35 +4,35 @@ include 'autoload.php';
 use config\Config;
 use data\HomePage;
 use data\Table;
-use data\TableStyles;
 use db\Database;
 use data\CSVTable;
-
-
-$request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$searchInPage = array_search($request, \config\Page::LINKS);
-if ($searchInPage) {
-    $result = router($request);
-
-
-    if (isset($_GET['deleteId'])) {
-        $config = new Config('config.ini');
-        $db = new Database($config);
-        $db->deleteRecord((int)$_GET['deleteId']);
-    }
-
-    echo $result->getHtml();
-
-}
+use data\CSVEditor;
 
 function router(string $uri): PageInterface
 {
 
     return match ($uri) {
         '/table' => (new Table(new Database(new Config('config.ini')))),
-        '/csv' => (new CSVTable('otherFiles/OpenDocument.csv')),
+        '/csv' => (new data\ConcreteCSVTable('otherFiles/OpenDocument.csv')),
         '/' => (new HomePage()),
         '/form' => (new \forms\Form(new Database(new Config('config.ini')))),
         default => new NotFoundHttp()
     };
 }
+    $request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $searchInPage = array_search($request, \config\Page::LINKS);
+    if ($searchInPage) {
+        $result = router($request);
+
+        if (isset($_GET['deleteId'])) {
+            $config = new Config('config.ini');
+            $db = new Database($config);
+            $db->deleteRecord((int)$_GET['deleteId']);
+        }
+        if (isset($_GET['delete_index'])) {
+            $csvEditor = new CSVEditor('otherFiles/OpenDocument.csv');
+            $csvEditor->deleteRow(); // Вызов метода deleteRow для удаления строки
+        }
+
+        echo $result->getHtml();
+    }
