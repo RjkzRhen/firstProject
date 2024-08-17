@@ -2,10 +2,10 @@
 namespace data;
 
 
+use AllowDynamicProperties;
 use Exception;
 use PageInterface;
 use data\CSVEditor;
-
 
 abstract class AbstractTable {
     protected $data;
@@ -13,7 +13,12 @@ abstract class AbstractTable {
     /**
      * @throws Exception
      */
-
+    public function loadData($source) {
+        $this->data = file($source);
+        if ($this->data === false) {
+            throw new Exception("Ошибка при загрузке данных из $source");
+        }
+    }
 
     abstract public function parseData();
 
@@ -23,13 +28,12 @@ interface Renderable {
     public function render();
 }
 
- abstract class CSVTable extends AbstractTable implements Renderable, PageInterface
+#[AllowDynamicProperties] abstract class CSVTable extends AbstractTable implements Renderable, PageInterface
 {
     private $filePath;
-     private \data\CSVEditor $csvEditor;
 
 
-     /**
+    /**
      * @throws Exception
      */
     public function __construct($filePath)
@@ -91,7 +95,7 @@ interface Renderable {
         $data = $this->readCsv();
         $html = "<!DOCTYPE html>\n<html lang='en'>\n<head>\n<meta charset='UTF-8'>\n<title>CSV Table</title>\n";
         $html .= $this->getStyle();
-        $html .= "</head>\n<body>\n<table>\n<tr><th>Username</th><th>Lastname</th><th>Firstname</th><th>Middlename</th><th>Age</th><th>Удалить</th></tr>\n";
+        $html .= "</head>\n<body>\n<table>\n<tr><th>Username</th><th>Lastname</th><th>Firstname</th><th>Middlename</th><th>Age</th><th>Action</th></tr>\n";
         foreach ($data as $index => $row) {
             $html .= "<tr>\n";
             foreach ($row as $cell) {
