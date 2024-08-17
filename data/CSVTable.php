@@ -1,95 +1,50 @@
 <?php
 namespace data;
 
-
-use AllowDynamicProperties;
 use Exception;
 use PageInterface;
-use data\CSVEditor;
 
-abstract class AbstractTable {
-    protected $data;
-
-    /**
-     * @throws Exception
-     */
-    public function loadData($source) {
-        $this->data = file($source);
-        if ($this->data === false) {
-            throw new Exception("Ошибка при загрузке данных из $source");
-        }
-    }
-
-    abstract public function parseData();
-
-}
-
-interface Renderable {
-    public function render();
-}
-
-#[AllowDynamicProperties] abstract class CSVTable extends AbstractTable implements Renderable, PageInterface
+abstract class CSVTable implements PageInterface
 {
+    protected $data;
     private $filePath;
 
-
-    /**
-     * @throws Exception
-     */
     public function __construct($filePath)
     {
         $this->filePath = $filePath;
         $this->loadData($this->filePath);
-        $this->csvEditor = new CSVEditor($this->filePath);
-
     }
 
-    /**
-     * @throws Exception
-     */
     public function loadData($filePath): void
     {
-        $this->data = file($filePath);
-        if ($this->data === false) {
+        $handle = fopen($filePath, "r");
+        if ($handle === false) {
             throw new Exception("Ошибка при открытии файла: " . $filePath);
         }
-        $this->parseData();
-    }
-
-    public function parseData(): void
-    {
-        array_walk($this->data, function (&$line) {
-            $detectedEncoding = mb_detect_encoding($line, ['Windows-1251', 'ISO-8859-1', 'UTF-8'], true);
-            $line = mb_convert_encoding($line, 'UTF-8', $detectedEncoding);
-        });
-    }
-
-    public function render(): string
-    {
-        $html = "<table>\n";
-        foreach ($this->data as $line) {
-            $html .= "<tr>\n";
-            foreach (str_getcsv($line, ';') as $cell) {
-                $html .= "<td>" . htmlspecialchars($cell) . "</td>\n";
-            }
-            $html .= "</tr>\n";
+        $this->data = [];
+        while (($line = fgetcsv($handle, 1000, ";")) !== false) {
+            $line = array_map(function($value) {
+                return mb_convert_encoding($value, 'UTF-8', 'Windows-1251');
+            }, $line);
+            $this->data[] = $line;
         }
-        $html .= "</table>\n";
-        return $html;
+        fclose($handle);
     }
 
+    abstract public function render(): string;
     public function readCsv(): array
     {
         $rows = [];
         foreach ($this->data as $line) {
-            $rows[] = str_getcsv($line, ';');
+            if (!is_array($line)) {
+                $rows[] = str_getcsv($line, ';');
+            } else {
+                $rows[] = $line;
+            }
         }
         return $rows;
     }
 
-    /**
-     * @throws Exception
-     */
     public function getHtml(): string
     {
         $data = $this->readCsv();
@@ -139,4 +94,6 @@ interface Renderable {
         }
     </style>";
     }
+
+
 }

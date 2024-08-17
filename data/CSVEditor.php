@@ -2,7 +2,7 @@
 namespace data;
 
 class CSVEditor {
-    private $filePath;
+    public $filePath;
 
     public function __construct($filePath) {
         $this->filePath = $filePath;
@@ -16,7 +16,7 @@ class CSVEditor {
             if ($data !== false) {
                 unset($data[$indexToDelete]); // Удаление строки
                 file_put_contents($this->filePath, implode("", $data)); // Запись данных обратно в файл
-                header("Location: /csv"); // Редирект обратно к странице с таблицей CSV
+                header("Location: '/csv'"); // Редирект обратно к странице с таблицей CSV
             } else {
                 echo "Ошибка при чтении файла.";
             }

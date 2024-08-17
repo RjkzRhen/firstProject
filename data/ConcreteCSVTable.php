@@ -1,8 +1,10 @@
 <?php
 namespace data;
 
-class ConcreteCSVTable extends CSVTable {
-    public function render(): string {
+class ConcreteCSVTable extends CSVTable
+{
+    public function render(): string
+    {
         $html = "<table>\n";
         foreach ($this->data as $line) {
             $html .= "<tr>\n";

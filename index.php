@@ -7,15 +7,14 @@ use data\Table;
 use db\Database;
 use data\CSVTable;
 use data\CSVEditor;
-
+use config\Page;
 function router(string $uri): PageInterface
 {
-
     return match ($uri) {
-        '/table' => (new Table(new Database(new Config('config.ini')))),
-        '/csv' => (new data\ConcreteCSVTable('otherFiles/OpenDocument.csv')),
-        '/' => (new HomePage()),
-        '/form' => (new \forms\Form(new Database(new Config('config.ini')))),
+        '/table' => new Table(new Database(new Config('config.ini'))),
+        '/csv' => new data\ConcreteCSVTable('otherFiles/OpenDocument.csv'),
+        '/' => new HomePage(),
+        '/form' => new \forms\Form(new Database(new Config('config.ini'))),
         default => new NotFoundHttp()
     };
 }
