@@ -1,8 +1,8 @@
 <?php
-spl_autoload_register(function($class) {
-    $classPath = str_replace('\\', DIRECTORY_SEPARATOR, $class);
-    $filePath = __DIR__ . DIRECTORY_SEPARATOR . $classPath . '.php';
-    if (file_exists($filePath)) {
-        require_once $filePath;
+spl_autoload_register(function($class) { // Регистрация анонимной функции в качестве автоматической загрузчика классов.
+    $classPath = str_replace('\\', DIRECTORY_SEPARATOR, $class); // Преобразование пространства имен класса в путь к файлу, заменяя символы обратной косой черты на разделители директорий операционной системы.
+    $filePath = __DIR__ . DIRECTORY_SEPARATOR . $classPath . '.php'; // Формирование полного пути к файлу класса, используя текущую директорию (__DIR__), разделитель директорий и имя класса с расширением .php.
+    if (file_exists($filePath)) { // Проверка существует ли файл по указанному пути.
+        require_once $filePath; // Если файл существует, он подключается однократно.
     }
 });

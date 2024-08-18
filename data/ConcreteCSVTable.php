@@ -1,19 +1,19 @@
 <?php
-namespace data;
+namespace data; // Определение пространства имен для класса, что помогает избежать конфликта имен с другими классами в других библиотеках.
 
-class ConcreteCSVTable extends CSVTable
+class ConcreteCSVTable extends CSVTable // Объявление класса ConcreteCSVTable, который наследует абстрактный класс CSVTable.
 {
-    public function render(): string
+    public function render(): string // Определение метода render, который должен возвращать HTML представление данных CSV.
     {
-        $html = "<table>\n";
-        foreach ($this->data as $line) {
-            $html .= "<tr>\n";
-            foreach (str_getcsv($line, ';') as $cell) {
-                $html .= "<td>" . htmlspecialchars($cell) . "</td>\n";
+        $html = "<table>\n"; // Начало формирования HTML строки с тегом <table>.
+        foreach ($this->data as $line) { // Перебор массива $data, каждый элемент которого представляет собой строку из CSV файла.
+            $html .= "<tr>\n"; // Добавление начала строки таблицы <tr>.
+            foreach (str_getcsv($line, ';') as $cell) { // Преобразование строки в массив по разделителю ';' и перебор каждой ячейки строки.
+                $html .= "<td>" . htmlspecialchars($cell) . "</td>\n"; // Добавление данных ячейки в таблицу. Данные обрабатываются функцией htmlspecialchars для предотвращения XSS атак.
             }
-            $html .= "</tr>\n";
+            $html .= "</tr>\n"; // Закрытие строки таблицы </tr>.
         }
-        $html .= "</table>\n";
-        return $html;
+        $html .= "</table>\n"; // Закрытие таблицы </table>.
+        return $html; // Возврат сформированной HTML строки.
     }
 }

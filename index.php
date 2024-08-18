@@ -28,9 +28,9 @@ function router(string $uri): PageInterface
             $db = new Database($config);
             $db->deleteRecord((int)$_GET['deleteId']);
         }
-        if (isset($_GET['delete_index'])) {
-            $csvEditor = new CSVEditor('otherFiles/OpenDocument.csv');
-            $csvEditor->deleteRow(); // Вызов метода deleteRow для удаления строки
+        if (isset($_GET['delete_username'])) {
+            $csvTable = new data\ConcreteCSVTable('otherFiles/OpenDocument.csv'); // Changed comma to semicolon here
+            $csvTable->deleteByUsername($_GET['delete_username']);
         }
 
         echo $result->getHtml();
