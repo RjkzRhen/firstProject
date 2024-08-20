@@ -58,7 +58,6 @@ class Database {
         $tableHtml .= "</table>\n";
         return $tableHtml;
     }
-
     public function getTableRows(int $minAge): array {
         $sql = "SELECT * FROM `name` WHERE age >= ?";
         $params = array('types' => 'i', 'values' => array($minAge));
@@ -83,5 +82,4 @@ class Database {
             echo "Ошибка: " . $this->conn->error;
         }
     }
-
 }
