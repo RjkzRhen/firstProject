@@ -15,10 +15,16 @@ class CSVEditor { // Определение класса CSVEditor.
             return $row[0] !== $username; // Возвращение true для элементов, которые не должны быть удалены.
         });
 
-        $file = fopen($this->filePath, 'w'); // Открытие файла для записи. Если файл существует, его содержимое уничтожается.
+        $file = fopen($this->filePath, ''); // Открытие файла для записи. Если файл существует, его содержимое уничтожается.
         foreach ($newData as $line) { // Перебор массива $newData.
             fputcsv($file, $line); // Запись каждой строки из $newData в файл.
         }
         fclose($file); // Закрытие файла после завершения записи.
+    }
+
+    public function addRowToCSV(array $row): void {
+        $file = fopen($this->filePath, 'a'); // Открытие файла для добавления данных
+        fputcsv($file, $row); // Добавление новой строки в файл CSV
+        fclose($file); // Закрытие файла
     }
 }

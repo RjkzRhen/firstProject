@@ -1,6 +1,7 @@
 <?php
 namespace forms;
 use config\Config;
+use data\CSVEditor;
 use db\Database;
 
 $config = new Config('config.ini');
@@ -67,6 +68,15 @@ class InsertForm {
         }
         return $fields; // Возвращает поля формы
     }
+    public function insertIntoCSV(array $dataTemplate, CSVEditor $csvEditor): void {
+        $newData = [];
+        foreach ($dataTemplate as $item) {
+            $newData[] = $item['value'];
+        }
+        // Предполагается, что CSVEditor имеет метод для добавления строки в файл CSV
+        $csvEditor->addRowToCSV($newData);
+    }
+
 }
 /*
  * handleRequest

@@ -5,33 +5,39 @@ use config\Config;
 use data\HomePage;
 use data\Table;
 use db\Database;
-use data\CSVTable;
+use data\ConcreteCSVTable;
 use data\CSVEditor;
-use config\Page;
+use forms\CSVForm;
+
 function router(string $uri): PageInterface
 {
+    $config = new Config('config.ini');
+    $database = new Database($config);
+    $csvEditor = new \data\CSVEditor('otherFiles/OpenDocument.csv');
     return match ($uri) {
         '/table' => new Table(new Database(new Config('config.ini'))),
-        '/csv' => new data\ConcreteCSVTable('otherFiles/OpenDocument.csv'),
+        '/csv' => new ConcreteCSVTable('otherFiles/OpenDocument.csv'),
         '/' => new HomePage(),
-        '/form' => new \forms\Form(new Database(new Config('config.ini'))),
+        '/form' => new forms\Form(new Database(new Config('config.ini'))),
+        '/csv_form' => new CSVForm($csvEditor),
         default => new NotFoundHttp()
     };
 }
-    $request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    $searchInPage = array_search($request, \config\Page::LINKS);
-    if ($searchInPage) {
-        $result = router($request);
 
-        if (isset($_GET['deleteId'])) {
-            $config = new Config('config.ini');
-            $db = new Database($config);
-            $db->deleteRecord((int)$_GET['deleteId']);
-        }
-        if (isset($_GET['delete_username'])) {
-            $csvTable = new data\ConcreteCSVTable('otherFiles/OpenDocument.csv'); // Changed comma to semicolon here
-            $csvTable->deleteByUsername($_GET['delete_username']);
-        }
+$request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$searchInPage = array_search($request, \config\Page::LINKS);
+if ($searchInPage) {
+    $result = router($request);
 
-        echo $result->getHtml();
+    if (isset($_GET['deleteId'])) {
+        $config = new Config('config.ini');
+        $db = new Database($config);
+        $db->deleteRecord((int)$_GET['deleteId']);
     }
+    if (isset($_GET['delete_username'])) {
+        $csvTable = new ConcreteCSVTable('otherFiles/OpenDocument.csv');
+        $csvTable->deleteByUsername($_GET['delete_username']);
+    }
+
+    echo $result->getHtml();
+}

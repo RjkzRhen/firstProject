@@ -4,7 +4,7 @@ require_once 'CSVEditor.php';
 use Exception;
 use PageInterface;
 
-abstract class CSVTable implements PageInterface
+abstract class CSVTable implements PageInterface // Объявление абстрактного класса CSVTable, который должен реализовать методы из PageInterface
 {
     /**
      * @var CSVEditor
