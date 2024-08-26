@@ -22,9 +22,4 @@ class CSVEditor { // Определение класса CSVEditor.
         fclose($file); // Закрытие файла после завершения записи.
     }
 
-    public function addRowToCSV(array $row): void {
-        $file = fopen($this->filePath, 'a'); // Открытие файла для добавления данных
-        fputcsv($file, $row); // Добавление новой строки в файл CSV
-        fclose($file); // Закрытие файла
-    }
 }

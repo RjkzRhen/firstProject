@@ -68,7 +68,7 @@ class InsertForm {
         }
         return $fields; // Возвращает поля формы
     }
-    public function insertIntoCSV(array $dataTemplate, CSVEditor $csvEditor): void {
+    public function insertIntoCSV(array $dataTemplate, $csvEditor): void {
         $newData = [];
         foreach ($dataTemplate as $item) {
             $newData[] = $item['value'];
