@@ -1,0 +1,177 @@
+Index: .idea/encodings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/encodings.xml b/.idea/encodings.xml
+new file mode 100644
+--- /dev/null	(date 1725481981774)
++++ b/.idea/encodings.xml	(date 1725481981774)
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="Encoding">
++    <file url="file://$PROJECT_DIR$/data/ConcreteCSVTable.php" charset="windows-1251" />
++    <file url="PROJECT" charset="windows-1251" />
++  </component>
++</project>
+\ No newline at end of file
+Index: config/Config.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?php\r\n\r\nnamespace config;\r\nclass Config\r\n{\r\n    private string $servername;\r\n    private string $username;\r\n    private string $password;\r\n    private string $dbname;\r\n\r\n    /**\r\n     * @throws \\Exception\r\n     */\r\n    public function __construct($filename)\r\n    {\r\n        $iniFile = parse_ini_file($filename, true);\r\n        if ($iniFile === false) {\r\n            throw new \\Exception(\"Unable to read configuration file: \" . $filename);\r\n        }\r\n        $this->servername = $iniFile['servername'];\r\n        $this->username = $iniFile['username'];\r\n        $this->password = $iniFile['password'];\r\n        $this->dbname = $iniFile['dbname'];\r\n    }\r\n\r\n    public function getServername(): string\r\n    {\r\n        return $this->servername;\r\n    }\r\n\r\n    public function getUsername(): string\r\n    {\r\n        return $this->username;\r\n    }\r\n\r\n    public function getPassword(): string\r\n    {\r\n        return $this->password;\r\n    }\r\n\r\n    public function getDbname(): string\r\n    {\r\n        return $this->dbname;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+diff --git a/config/Config.php b/config/Config.php
+--- a/config/Config.php	(revision f2e2ab958af34a392bacef154805c45e869a1d95)
++++ b/config/Config.php	(date 1725481387008)
+@@ -43,3 +43,6 @@
+         return $this->dbname;
+     }
+ }
++
++
++
+Index: .idea/php.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/php.xml b/.idea/php.xml
+new file mode 100644
+--- /dev/null	(date 1723893565173)
++++ b/.idea/php.xml	(date 1723893565173)
+@@ -0,0 +1,20 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="MessDetectorOptionsConfiguration">
++    <option name="transferred" value="true" />
++  </component>
++  <component name="PHPCSFixerOptionsConfiguration">
++    <option name="transferred" value="true" />
++  </component>
++  <component name="PHPCodeSnifferOptionsConfiguration">
++    <option name="highlightLevel" value="WARNING" />
++    <option name="transferred" value="true" />
++  </component>
++  <component name="PhpProjectSharedConfiguration" php_language_level="8.3" />
++  <component name="PhpStanOptionsConfiguration">
++    <option name="transferred" value="true" />
++  </component>
++  <component name="PsalmOptionsConfiguration">
++    <option name="transferred" value="true" />
++  </component>
++</project>
+\ No newline at end of file
+Index: data/CSVEditor.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?php\r\nnamespace data; // Определяет пространство имен для класса, что помогает избежать конфликта имен с другими классами в других библиотеках.\r\n\r\nclass CSVEditor { // Определение класса CSVEditor.\r\n    private $filePath; // Объявление приватного свойства $filePath для хранения пути к файлу CSV.\r\n\r\n    public function __construct($filePath) { // Конструктор класса, который вызывается при создании нового объекта CSVEditor.\r\n        $this->filePath = $filePath; // Присваивание значения параметра $filePath приватному свойству $filePath.\r\n    }\r\n\r\n    public function deleteByUsername($username): void // Метод для удаления строки в CSV файле по имени пользователя.\r\n    {\r\n        $data = array_map('str_get-csv', file($this->filePath)); // Чтение файла в массив, где каждая строка файла преобразуется в массив данных с помощью функции str_get-csv.\r\n        $newData = array_filter($data, function ($row) use ($username) { // Фильтрация массива $data. Удаляются строки, где имя пользователя (первый элемент массива) совпадает с $username.\r\n            return $row[0] !== $username; // Возвращение true для элементов, которые не должны быть удалены.\r\n        });\r\n\r\n        $file = fopen($this->filePath, ''); // Открытие файла для записи. Если файл существует, его содержимое уничтожается.\r\n        foreach ($newData as $line) { // Перебор массива $newData.\r\n            fputcsv($file, $line); // Запись каждой строки из $newData в файл.\r\n        }\r\n        fclose($file); // Закрытие файла после завершения записи.\r\n    }\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+diff --git a/data/CSVEditor.php b/data/CSVEditor.php
+--- a/data/CSVEditor.php	(revision f2e2ab958af34a392bacef154805c45e869a1d95)
++++ b/data/CSVEditor.php	(date 1725481386978)
+@@ -5,7 +5,7 @@
+     private $filePath; // Объявление приватного свойства $filePath для хранения пути к файлу CSV.
+ 
+     public function __construct($filePath) { // Конструктор класса, который вызывается при создании нового объекта CSVEditor.
+-        $this->filePath = $filePath; // Присваивание значения параметра $filePath приватному свойству $filePath.
++        $this->filePath = $filePath; // Присваивание значения параметра $filePath приватному свойству $filePath.wwwww
+     }
+ 
+     public function deleteByUsername($username): void // Метод для удаления строки в CSV файле по имени пользователя.
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+new file mode 100644
+--- /dev/null	(date 1723893565223)
++++ b/.idea/vcs.xml	(date 1723893565223)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: data/ConcreteCSVTable.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?php\r\nnamespace data; // Определение пространства имен для класса, что помогает избежать конфликта имен с другими классами в других библиотеках.\r\n\r\nclass ConcreteCSVTable extends CSVTable // Объявление класса ConcreteCSVTable, который наследует абстрактный класс CSVTable.\r\n{\r\n    public function render(): string // Определение метода render, который должен возвращать HTML представление данных CSV.\r\n    {\r\n        $html = \"<table>\\n\"; // Начало формирования HTML строки с тегом <table>.\r\n        foreach ($this->data as $line) { // Перебор массива $data, каждый элемент которого представляет собой строку из CSV файла.\r\n            $html .= \"<tr>\\n\"; // Добавление начала строки таблицы <tr>.\r\n            foreach (str_getcsv($line, ';') as $cell) { // Преобразование строки в массив по разделителю ';' и перебор каждой ячейки строки.\r\n                $html .= \"<td>\" . htmlspecialchars($cell) . \"</td>\\n\"; // Добавление данных ячейки в таблицу. Данные обрабатываются функцией htmlspecialchars для предотвращения XSS атак.\r\n            }\r\n            $html .= \"</tr>\\n\"; // Закрытие строки таблицы </tr>.\r\n        }\r\n        $html .= \"</table>\\n\"; // Закрытие таблицы </table>.\r\n        return $html; // Возврат сформированной HTML строки.\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+diff --git a/data/ConcreteCSVTable.php b/data/ConcreteCSVTable.php
+--- a/data/ConcreteCSVTable.php	(revision f2e2ab958af34a392bacef154805c45e869a1d95)
++++ b/data/ConcreteCSVTable.php	(date 1725481833295)
+@@ -5,7 +5,7 @@
+ {
+     public function render(): string // Определение метода render, который должен возвращать HTML представление данных CSV.
+     {
+-        $html = "<table>\n"; // Начало формирования HTML строки с тегом <table>.
++        $html = "<table>\n"; // Начало формирования HTML строки с тегом <table>.wwwwww
+         foreach ($this->data as $line) { // Перебор массива $data, каждый элемент которого представляет собой строку из CSV файла.
+             $html .= "<tr>\n"; // Добавление начала строки таблицы <tr>.
+             foreach (str_getcsv($line, ';') as $cell) { // Преобразование строки в массив по разделителю ';' и перебор каждой ячейки строки.
+@@ -14,6 +14,7 @@
+             $html .= "</tr>\n"; // Закрытие строки таблицы </tr>.
+         }
+         $html .= "</table>\n"; // Закрытие таблицы </table>.
+-        return $html; // Возврат сформированной HTML строки.
++        return $html;
++        // Возврат сформированной HTML строки.
+     }
+ }
+Index: otherFiles/OpenDocument.csv
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>username;lastname;firstname;middlename;age\r\nvlad;Ярославцев;Владислав;Михайлович;30\r\n,,,\r\n,,,\r\n33,33,33,33\r\n33,33,33,33\r\n33,33,33,66\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+diff --git a/otherFiles/OpenDocument.csv b/otherFiles/OpenDocument.csv
+--- a/otherFiles/OpenDocument.csv	(revision f2e2ab958af34a392bacef154805c45e869a1d95)
++++ b/otherFiles/OpenDocument.csv	(date 1724713965321)
+@@ -1,7 +1,2 @@
+ username;lastname;firstname;middlename;age
+ vlad;Ярославцев;Владислав;Михайлович;30
+-,,,
+-,,,
+-33,33,33,33
+-33,33,33,33
+-33,33,33,66
+Index: .idea/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+diff --git a/.idea/.gitignore b/.idea/.gitignore
+new file mode 100644
+--- /dev/null	(date 1724745050855)
++++ b/.idea/.gitignore	(date 1724745050855)
+@@ -0,0 +1,8 @@
++# Default ignored files
++/shelf/
++/workspace.xml
++# Editor-based HTTP Client requests
++/httpRequests/
++# Datasource local storage ignored files
++/dataSources/
++/dataSources.local.xml
+Index: formsCSV/333.php
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>windows-1251
+===================================================================
+diff --git a/formsCSV/333.php b/formsCSV/333.php
+new file mode 100644
+--- /dev/null	(date 1725482350726)
++++ b/formsCSV/333.php	(date 1725482350726)
+@@ -0,0 +1,1 @@
++<?php
