@@ -3,6 +3,8 @@
 namespace config;
 class Config
 {
+
+
     private string $servername;
     private string $username;
     private string $password;
