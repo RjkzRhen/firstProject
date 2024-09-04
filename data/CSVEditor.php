@@ -7,9 +7,6 @@ class CSVEditor { // Определение класса CSVEditor.
     public function __construct($filePath) { // Конструктор класса, который вызывается при создании нового объекта CSVEditor.
         $this->filePath = $filePath; // Присваивание значения параметра $filePath приватному свойству $filePath.
     }
-
-
-
     public function deleteByUsername($username): void // Метод для удаления строки в CSV файле по имени пользователя.
     {
         $data = array_map('str_get-csv', file($this->filePath)); // Чтение файла в массив, где каждая строка файла преобразуется в массив данных с помощью функции str_get-csv.
@@ -25,3 +22,4 @@ class CSVEditor { // Определение класса CSVEditor.
     }
 
 }
+
