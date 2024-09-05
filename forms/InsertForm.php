@@ -68,15 +68,6 @@ class InsertForm {
         }
         return $fields; // Возвращает поля формы
     }
-    public function insertIntoCSV(array $dataTemplate, $csvEditor): void {
-        $newData = [];
-        foreach ($dataTemplate as $item) {
-            $newData[] = $item['value'];
-        }
-        // Предполагается, что CSVEditor имеет метод для добавления строки в файл CSV
-        $csvEditor->addRowToCSV($newData);
-    }
-
 }
 /*
  * handleRequest

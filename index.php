@@ -7,19 +7,21 @@ use data\Table;
 use db\Database;
 use data\ConcreteCSVTable;
 use data\CSVEditor;
-use forms\CSVForm;
+use formsCSV\CSVWriter;
+use formsCSV\AddRecord;
 
 function router(string $uri): PageInterface
 {
     $config = new Config('config.ini');
     $database = new Database($config);
     $csvEditor = new \data\CSVEditor('otherFiles/OpenDocument.csv');
+    $addRecordPage = new AddRecord('otherFiles/OpenDocument.csv');
     return match ($uri) {
         '/table' => new Table(new Database(new Config('config.ini'))),
         '/csv' => new ConcreteCSVTable('otherFiles/OpenDocument.csv'),
         '/' => new HomePage(),
         '/form' => new forms\Form(new Database(new Config('config.ini'))),
-        '/csv_form' => new CSVForm($csvEditor),
+        '/add_record' => new formsCSV\AddRecord('otherFiles/OpenDocument.csv'),
         default => new NotFoundHttp()
     };
 }
@@ -37,6 +39,9 @@ if ($searchInPage) {
     if (isset($_GET['delete_username'])) {
         $csvTable = new ConcreteCSVTable('otherFiles/OpenDocument.csv');
         $csvTable->deleteByUsername($_GET['delete_username']);
+    }
+    if ($result instanceof formsCSV\AddRecord) {
+        $result->handlePost();
     }
 
     echo $result->getHtml();

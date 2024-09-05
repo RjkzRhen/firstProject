@@ -8,7 +8,7 @@ class Page
     public const  LINK_TABLE = '/table';
     public const  LINK_FORM = '/form';
     public const  LINK_CSV = '/csv';
-    public const  LINK_CSV_FORM = '/csv_form';
+    public const  LINK_CSV_FORM = '/add_record';
 
 
     public const  LINKS = [

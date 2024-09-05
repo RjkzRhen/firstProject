@@ -60,18 +60,18 @@ abstract class CSVTable implements PageInterface // Объявление абс�
         foreach ($data as $index => $row) {
             if ($index == 0) continue; // Assuming the first row might be headers
             $html .= "<tr>\n";
-            foreach ($row as $cell) {
-                $html .= "<td>" . htmlspecialchars($cell) . "</td>\n";
+            foreach ($row as $cellIndex => $cell) {
+                $style = '';
+                if ($cellIndex == 4 && (int)$cell > 50) { // Check if the index corresponds to 'Age' and the value is greater than 50
+                    $style = ' class="age-over-50"';
+                }
+                $html .= "<td" . $style . ">" . htmlspecialchars($cell) . "</td>\n";
             }
             $username = htmlspecialchars($row[0]);
             $html .= "<td><a href='index.php?delete_username={$username}'>Delete</a></td>\n</tr>\n";
         }
         $html .= "</table>\n</body>\n</html>";
         return $html;
-    }
-    public function deleteByUsername($username): void
-    {
-        $this->csvEditor->deleteByUsername($username);
     }
 
     private function getStyle(): string
@@ -104,6 +104,10 @@ abstract class CSVTable implements PageInterface // Объявление абс�
         tr:hover {
             background-color: #f1f1f1;
         }
+         .age-over-50 {
+        color: red;
+        font-weight: bold;
+    }
     </style>";
     }
 
