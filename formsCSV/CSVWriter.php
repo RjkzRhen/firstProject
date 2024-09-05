@@ -1,25 +1,25 @@
 <?php
-namespace formsCSV;
+namespace formsCSV; // Определяет пространство имен для класса CSVWriter.
 
-class CSVWriter {
-    private $filePath;
+class CSVWriter { // Объявление класса CSVWriter.
+    private $filePath; // Приватное свойство для хранения пути к файлу CSV.
 
-    public function __construct($filePath) {
-        $this->filePath = $filePath;
+    public function __construct($filePath) { // Конструктор класса, принимает путь к файлу как параметр.
+        $this->filePath = $filePath; // Присваивание значения параметра filePath свойству класса.
     }
 
-    public function addRecord(array $data): void {
-        $handle = fopen($this->filePath, 'a');  // Open file for appending
-        if (!$handle) {
-            throw new Exception("Cannot open file: " . $this->filePath);
+    public function addRecord(array $data): void { // Метод для добавления записи в CSV файл, принимает массив данных.
+        $handle = fopen($this->filePath, 'a');  // Открывает файл в режиме добавления.
+        if (!$handle) { // Проверяет успешность открытия файла.
+            throw new Exception("Cannot open file: " . $this->filePath); // Выбрасывает исключение, если файл не удаётся открыть.
         }
 
-        // Convert array to ';' delimited string
+        // Конвертация массива в строку, разделённую символом ';'
         $csvLine = implode(';', $data);
 
-        // Write the line with correct encoding
+        // Запись строки в файл с преобразованием кодировки в Windows-1251 из UTF-8 и добавлением символа новой строки.
         fwrite($handle, mb_convert_encoding($csvLine . "\n", 'Windows-1251', 'UTF-8'));
-        fclose($handle);
+        fclose($handle); // Закрывает файл.
     }
 }
 

@@ -1,18 +1,18 @@
 <?php
-namespace formsCSV;
+namespace formsCSV; // Определяет пространство имен для класса AddRecord.
 
-require_once 'CSVWriter.php';
-use PageInterface;
+require_once 'CSVWriter.php'; // Подключение файла CSVWriter.php, содержащего определение класса CSVWriter.
+use PageInterface; // Импорт интерфейса PageInterface для реализации в классе AddRecord.
 
-class AddRecord implements PageInterface {
-    private CSVWriter $csvWriter;
+class AddRecord implements PageInterface { // Объявление класса AddRecord, который реализует интерфейс PageInterface.
+    private CSVWriter $csvWriter; // Приватное свойство для хранения экземпляра класса CSVWriter.
 
-    public function __construct($filePath) {
-        $this->csvWriter = new CSVWriter($filePath);
+    public function __construct($filePath) { // Конструктор класса, принимает путь к файлу CSV.
+        $this->csvWriter = new CSVWriter($filePath); // Создание нового объекта CSVWriter и сохранение его в свойстве класса.
     }
 
-    public function handlePost(): array {
-        $fields = [
+    public function handlePost(): array { // Метод для обработки POST запроса и добавления записи в CSV файл.
+        $fields = [ // Массив полей формы, содержащий имя, значение и признак валидности.
             ['name' => 'username', 'value' => '', 'isValid' => true],
             ['name' => 'lastname', 'value' => '', 'isValid' => true],
             ['name' => 'firstname', 'value' => '', 'isValid' => true],
@@ -20,38 +20,38 @@ class AddRecord implements PageInterface {
             ['name' => 'age', 'value' => '', 'isValid' => true],
         ];
 
-        $allValid = true;  // Flag to check if all fields are valid
+        $allValid = true;  // Флаг, проверяющий валидность всех полей.
 
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            foreach ($fields as &$field) {
-                $fieldValue = $_POST[$field['name']] ?? '';
-                if (empty($fieldValue)) {
-                    $field['isValid'] = false;
-                    $allValid = false;  // Set flag to false if any field is invalid
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Проверка, что текущий запрос является POST.
+            foreach ($fields as &$field) { // Перебор всех полей формы.
+                $fieldValue = $_POST[$field['name']] ?? ''; // Получение значения поля из POST данных.
+                if (empty($fieldValue)) { // Проверка, если поле пустое.
+                    $field['isValid'] = false; // Установка признака невалидности поля.
+                    $allValid = false;  // Установка общего флага невалидности.
                 } else {
-                    $field['value'] = $fieldValue;  // Store the value from POST data
+                    $field['value'] = $fieldValue;  // Сохранение значения поля.
                 }
             }
 
-            if ($allValid) {
-                // Prepare data for CSV writing
+            if ($allValid) { // Проверка, если все поля валидны.
+                // Подготовка данных для записи в CSV.
                 $data = array_map(function ($field) {
                     return $field['value'];
                 }, $fields);
 
-                // Write to CSV
+                // Попытка записи в CSV файл.
                 try {
                     $this->csvWriter->addRecord($data);
-                    // Redirect to avoid form resubmission
+                    // Перенаправление для избежания повторной отправки формы.
                     header("Location: " . $_SERVER['REQUEST_URI']);
                     exit;
-                } catch (\Exception $e) {
+                } catch (\Exception $e) { // Обработка возможных исключений.
                     echo "Error: " . $e->getMessage();
                 }
             }
         }
 
-        return $fields;
+        return $fields; // Возврат массива полей формы.
     }
 
 
@@ -75,8 +75,8 @@ class AddRecord implements PageInterface {
 <body>
     <form method="post">';
 
-        foreach ($fields as $field) {
-            $class = $field['isValid'] ? "req" : "error";  // Apply class based on validation
+        foreach ($fields as $field) { // Перебор полей для создания элементов формы.
+            $class = $field['isValid'] ? "req" : "error";  // Применение класса в зависимости от валидности.
             $html .= '<label for="' . $field['name'] . '">' . ucfirst($field['name']) . ':</label>';
             $html .= '<input type="text" name="' . $field['name'] . '" value="' . htmlspecialchars($field['value']) . '" class="' . $class . '"><br>';
         }
@@ -86,6 +86,6 @@ class AddRecord implements PageInterface {
 </body>
 </html>';
 
-        return $html;
+        return $html; // Возвращение сгенерированного HTML кода.
     }
 }
