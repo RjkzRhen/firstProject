@@ -8,7 +8,7 @@ class CSVWriter { // Объявление класса CSVWriter.
         $this->filePath = $filePath; // Присваивание значения параметра filePath свойству класса.
     }
 
-    public function addRecord(array $data): void { // Метод для добавления записи в CSV файл, принимает массив данных.
+    public function addRecord(array $data): void { // Метод для добавления записи в CSV файл, принимает массив данных.Этот метод вызывается, когда все поля формы, полученные из запроса POST, проверены и являются допустимыми.
         $handle = fopen($this->filePath, 'a');  // Открывает файл в режиме добавления.
         if (!$handle) { // Проверяет успешность открытия файла.
             throw new Exception("Cannot open file: " . $this->filePath); // Выбрасывает исключение, если файл не удаётся открыть.

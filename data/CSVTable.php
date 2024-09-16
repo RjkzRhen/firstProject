@@ -55,7 +55,7 @@ abstract class CSVTable implements PageInterface // Объявление абс�
         $data = $this->readCsv();
         $html = "<!DOCTYPE html>\n<html lang='en'>\n<head>\n<meta charset='UTF-8'>\n<title>CSV Table</title>\n";
         $html .= $this->getStyle();
-        $html .= "</head>\n<body>\n<table>\n<tr><th>Username</th><th>Lastname</th><th>Firstname</th><th>Middlename</th><th>Age</th><th>Action</th></tr>\n";
+        $html .= "</head>\n<body>\n<table>\n<tr><th>Username</th><th>Lastname</th><th>Firstname</th><th>Middlename</th><th>Age</th><th>Удалить</th></tr>\n";
 
         foreach ($data as $index => $row) {
             if ($index == 0) continue; // Assuming the first row might be headers
@@ -68,7 +68,7 @@ abstract class CSVTable implements PageInterface // Объявление абс�
                 $html .= "<td" . $style . ">" . htmlspecialchars($cell) . "</td>\n";
             }
             $username = htmlspecialchars($row[0]);
-            $html .= "<td><a href='index.php?delete_username={$username}'>Delete</a></td>\n</tr>\n";
+            $html .= "<td><a href='index.php?delete_username={$username}'>Удалить</a></td>\n</tr>\n";
         }
         $html .= "</table>\n</body>\n</html>";
         return $html;

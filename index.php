@@ -1,5 +1,6 @@
 <?php
 include 'autoload.php';
+require 'vendor/autoload.php';
 
 use config\Config;
 use data\HomePage;

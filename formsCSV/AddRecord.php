@@ -59,7 +59,7 @@ class AddRecord implements PageInterface { // ќбъ€вление класса AddRecord, котор
         $fields = $this->handlePost();
         $html = '<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
-    <title>ƒобавление пользовател€ в CSV</title>
+    <title>Add an entry to the table</title>
     <style type="text/css">
         .error { border: 2px solid #ff0000; }
         .req:valid { border: 2px solid #000000; }
@@ -81,7 +81,7 @@ class AddRecord implements PageInterface { // ќбъ€вление класса AddRecord, котор
             $html .= '<input type="text" name="' . $field['name'] . '" value="' . htmlspecialchars($field['value']) . '" class="' . $class . '"><br>';
         }
 
-        $html .= '<input type="submit" value="Add Record">
+        $html .= '<input type="submit" value="Add an entry to the table">
     </form>
 </body>
 </html>';

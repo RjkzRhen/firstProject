@@ -1,0 +1,11 @@
+\\ ?php
+require 'vendor/autoload.php'; // Подключение автозагрузчика Composer
+
+// Настройка загрузчика шаблонов
+$loader = new \Twig\Loader\FilesystemLoader('/path/to/templates');
+
+// Инициализация окружения Twig
+$twig = new \Twig\Environment($loader);
+
+// Рендеринг шаблона
+echo $twig->render('index.twig', ['name' => 'World']);
