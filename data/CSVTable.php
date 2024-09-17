@@ -1,10 +1,9 @@
 <?php
 namespace data;
-require_once 'CSVEditor.php';
 use Exception;
 use PageInterface;
 
-abstract class CSVTable implements PageInterface // Объявление абстрактного класса CSVTable, который должен реализовать методы из PageInterface
+class CSVTable implements PageInterface // Объявление абстрактного класса CSVTable, который должен реализовать методы из PageInterface
 {
     /**
      * @var CSVEditor
@@ -34,8 +33,6 @@ abstract class CSVTable implements PageInterface // Объявление абс�
         }
         fclose($handle); // Закрытие файла
     }
-
-    abstract public function render(): string; // Абстрактный метод для генерации HTML представления, должен быть реализован в наследниках
 
     public function readCsv(): array // Метод для чтения данных из массива $data
     {
@@ -110,6 +107,4 @@ abstract class CSVTable implements PageInterface // Объявление абс�
     }
     </style>";
     }
-
-
 }
