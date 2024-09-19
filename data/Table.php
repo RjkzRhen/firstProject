@@ -16,7 +16,7 @@ class Table extends AbstractTable implements PageInterface
 
     public function loadData($filePath): void
     {
-        // This method is not used in this class, but it's required by the abstract class
+
     }
 
     public function getHtml(): string

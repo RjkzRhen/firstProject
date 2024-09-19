@@ -67,4 +67,10 @@ class CSVTable extends AbstractTable implements PageInterface
         $html .= "</table>\n</body>\n</html>";
         return $html;
     }
+
+    public function deleteByUsername($username): void
+    {
+        $this->csvEditor->deleteByUsername($username);
+        $this->loadData($this->filePath); // Перезагрузка данных после удаления
+    }
 }
