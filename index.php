@@ -1,6 +1,6 @@
 <?php
-include 'autoload.php';
-require 'vendor/autoload.php';
+include 'autoload.php'; // Подключение автозагрузчика классов
+require 'vendor/autoload.php'; // Подключение автозагрузчика зависимостей
 
 use config\Config;
 use data\HomePage;
@@ -11,39 +11,38 @@ use data\CSVEditor;
 use formsCSV\CSVWriter;
 use formsCSV\AddRecord;
 
-function router(string $uri): PageInterface
-{
-    $config = new Config('config.ini');
-    $database = new Database($config);
-    $csvEditor = new \data\CSVEditor('otherFiles/OpenDocument.csv');
-    $addRecordPage = new AddRecord('otherFiles/OpenDocument.csv');
+function router(string $uri): PageInterface {
+    $config = new Config('config.ini'); // Создание объекта конфигурации
+    $database = new Database($config); // Создание объекта базы данных с использованием конфигурации
+    $csvEditor = new \data\CSVEditor('otherFiles/OpenDocument.csv'); // Создание объекта для работы с CSV-файлом
+    $addRecordPage = new AddRecord('otherFiles/OpenDocument.csv'); // Создание объекта для добавления записи в CSV-файл
     return match ($uri) {
-        '/table' => new Table(new Database(new Config('config.ini'))),
-        '/csv' => new CSVTable('otherFiles/OpenDocument.csv'),
-        '/' => new HomePage(),
-        '/form' => new forms\Form(new Database(new Config('config.ini'))),
-        '/add_record' => new formsCSV\AddRecord('otherFiles/OpenDocument.csv'),
-        default => new NotFoundHttp()
+        '/table' => new Table(new Database(new Config('config.ini'))), // Создание объекта таблицы с использованием базы данных
+        '/csv' => new CSVTable('otherFiles/OpenDocument.csv'), // Создание объекта таблицы для CSV-файла
+        '/' => new HomePage(), // Создание объекта домашней страницы
+        '/form' => new forms\Form(new Database(new Config('config.ini'))), // Создание объекта формы с использованием базы данных
+        '/add_record' => new formsCSV\AddRecord('otherFiles/OpenDocument.csv'), // Создание объекта для добавления записи в CSV-файл
+        default => new NotFoundHttp() // Создание объекта страницы 404
     };
 }
 
-$request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$searchInPage = array_search($request, \config\Page::LINKS);
+$request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // Получение URI запроса
+$searchInPage = array_search($request, \config\Page::LINKS); // Поиск соответствия URI в массиве ссылок
 if ($searchInPage) {
-    $result = router($request);
+    $result = router($request); // Определение страницы на основе URI
 
-    if (isset($_GET['deleteId'])) {
-        $config = new Config('config.ini');
-        $db = new Database($config);
-        $db->deleteRecord((int)$_GET['deleteId']);
+    if (isset($_GET['deleteId'])) { // Проверка наличия параметра deleteId в GET-запросе
+        $config = new Config('config.ini'); // Создание объекта конфигурации
+        $db = new Database($config); // Создание объекта базы данных с использованием конфигурации
+        $db->deleteRecord((int)$_GET['deleteId']); // Удаление записи по ID
     }
-    if (isset($_GET['delete_username'])) {
-        $csvTable = new CSVTable('otherFiles/OpenDocument.csv');
-        $csvTable->deleteByUsername($_GET['delete_username']);
+    if (isset($_GET['delete_username'])) { // Проверка наличия параметра delete_username в GET-запросе
+        $csvTable = new CSVTable('otherFiles/OpenDocument.csv'); // Создание объекта таблицы для CSV-файла
+        $csvTable->deleteByUsername($_GET['delete_username']); // Удаление записи по имени пользователя
     }
-    if ($result instanceof formsCSV\AddRecord) {
-        $result->handlePost();
+    if ($result instanceof formsCSV\AddRecord) { // Проверка, является ли результат объектом AddRecord
+        $result->handlePost(); // Обработка POST-запроса
     }
 
-    echo $result->getHtml();
+    echo $result->getHtml(); // Вывод HTML-кода страницы
 }

@@ -2,16 +2,14 @@
 
 namespace data;
 
-abstract class AbstractTable
-{
-    protected $data;
+abstract class AbstractTable {
+    protected $data; // ќбъ€вление свойства дл€ хранени€ данных таблицы
 
-    abstract public function loadData($filePath): void;
+    abstract public function loadData($filePath): void; // ќбъ€вление абстрактного метода дл€ загрузки данных
 
-    abstract public function getHtml(): string;
+    abstract public function getHtml(): string; // ќбъ€вление абстрактного метода дл€ получени€ HTML-кода таблицы
 
-    protected function getStyle(): string
-    {
+    protected function getStyle(): string {
         return "<style>
         body {
             font-family: 'Times New Roman', Times, serif;
@@ -44,6 +42,6 @@ abstract class AbstractTable
             color: red;
             font-weight: bold;
         }
-        </style>";
+        </style>"; // ¬озвращение стилей дл€ таблицы
     }
 }

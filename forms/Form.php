@@ -4,36 +4,37 @@ namespace forms;
 use db\Database;
 use forms\InsertForm;
 use PageInterface;
-class Form implements PageInterface {
-    private InsertForm $insertForm;
-    private Database $db;
 
-    private array $fields;
+class Form implements PageInterface {
+    private InsertForm $insertForm; // Объявление свойства для хранения объекта InsertForm
+    private Database $db; // Объявление свойства для хранения объекта Database
+
+    private array $fields; // Объявление свойства для хранения полей формы
 
     public function __construct(Database $db) {
-        $this->db = $db;
-        $this->insertForm = new InsertForm(); // Создание нового объекта InsertForm и присваивание его свойству объекта
-        $this->fields = $this->insertForm->handleRequest();
-        if ($this->isAllValid($this->fields)) {
-            $this->insertForm->insertIntoTable($this->fields, $this->db->conn);
+        $this->db = $db; // Присваивание переданного объекта Database свойству $db
+        $this->insertForm = new InsertForm(); // Создание нового объекта InsertForm и присваивание его свойству $insertForm
+        $this->fields = $this->insertForm->handleRequest(); // Обработка запроса и получение полей формы
+        if ($this->isAllValid($this->fields)) { // Проверка валидности всех полей
+            $this->insertForm->insertIntoTable($this->fields, $this->db->conn); // Вставка данных в таблицу, если все поля валидны
         }
-
     }
 
     public function isAllValid(array $dataTemplate): bool {
-        foreach ($dataTemplate as &$field) {
-            if ($field['required'] && empty($field['value'])) {
-                $field['isValid'] = false;
+        foreach ($dataTemplate as &$field) { // Перебор всех полей в шаблоне данных
+            if ($field['required'] && empty($field['value'])) { // Проверка, является ли поле обязательным и пустым
+                $field['isValid'] = false; // Установка флага валидности в false, если поле обязательное и пустое
             } else {
-                $field['isValid'] = true;
+                $field['isValid'] = true; // Установка флага валидности в true, если поле не обязательное или не пустое
             }
 
-            if (!$field['isValid']) {
+            if (!$field['isValid']) { // Если поле невалидно, возвращаем false
                 return false;
             }
         }
-        return true;
+        return true; // Если все поля валидны, возвращаем true
     }
+
     public function getHtml(): string {
         $html = '<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
@@ -51,13 +52,13 @@ class Form implements PageInterface {
     </head>
     <body>
     <form action="/form" method="post" id="userForm">';
-        foreach ($this->fields as $field) {
-            $class = $field['isValid'] ? "req" : "error";
-            $html .= '<label for="' . $field['id'] . '">' . $field['label'] . ':</label>';
-            $html .= '<input type="' . $field['type'] . '" id="' . $field['id'] . '" name="' . $field['name'] . '" value="' . $field['value'] .'" class="'.$class.'"><br>';
+        foreach ($this->fields as $field) { // Перебор всех полей формы
+            $class = $field['isValid'] ? "req" : "error"; // Определение класса для поля в зависимости от валидности
+            $html .= '<label for="' . $field['id'] . '">' . $field['label'] . ':</label>'; // Добавление метки для поля
+            $html .= '<input type="' . $field['type'] . '" id="' . $field['id'] . '" name="' . $field['name'] . '" value="' . $field['value'] .'" class="'.$class.'"><br>'; // Добавление поля ввода
         }
-        $html .= '<input type="submit" name="submit" value="Добавить пользователя" id="button">';
+        $html .= '<input type="submit" name="submit" value="Добавить пользователя" id="button">'; // Добавление кнопки отправки формы
         $html .= '</form></body></html>';
-        return $html;
+        return $html; // Возвращение сгенерированного HTML
     }
 }
