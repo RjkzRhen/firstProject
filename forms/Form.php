@@ -2,37 +2,23 @@
 namespace forms;
 
 use db\Database;
-use forms\InsertForm;
 use PageInterface;
 
-class Form implements PageInterface {
-    private InsertForm $insertForm; // Объявление свойства для хранения объекта InsertForm
-    private Database $db; // Объявление свойства для хранения объекта Database
-
-    private array $fields; // Объявление свойства для хранения полей формы
-
+class Form extends AbstractForm implements PageInterface {
     public function __construct(Database $db) {
-        $this->db = $db; // Присваивание переданного объекта Database свойству $db
-        $this->insertForm = new InsertForm(); // Создание нового объекта InsertForm и присваивание его свойству $insertForm
-        $this->fields = $this->insertForm->handleRequest(); // Обработка запроса и получение полей формы
+        parent::__construct($db); // Вызов конструктора родительского класса
         if ($this->isAllValid($this->fields)) { // Проверка валидности всех полей
-            $this->insertForm->insertIntoTable($this->fields, $this->db->conn); // Вставка данных в таблицу, если все поля валидны
+            $this->insertIntoTable($this->fields, $this->db->conn); // Вставка данных в таблицу, если все поля валидны
         }
     }
 
-    public function isAllValid(array $dataTemplate): bool {
-        foreach ($dataTemplate as &$field) { // Перебор всех полей в шаблоне данных
-            if ($field['required'] && empty($field['value'])) { // Проверка, является ли поле обязательным и пустым
-                $field['isValid'] = false; // Установка флага валидности в false, если поле обязательное и пустое
-            } else {
-                $field['isValid'] = true; // Установка флага валидности в true, если поле не обязательное или не пустое
-            }
-
-            if (!$field['isValid']) { // Если поле невалидно, возвращаем false
-                return false;
-            }
-        }
-        return true; // Если все поля валидны, возвращаем true
+    protected function getTemplate(): array {
+        return [
+            ['id' => 'last_name', 'name' => 'last_name', 'label' => 'Фамилия', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
+            ['id' => 'first_name', 'name' => 'first_name', 'label' => 'Имя', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
+            ['id' => 'middle_name', 'name' => 'middle_name', 'label' => 'Отчество', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
+            ['id' => 'age', 'name' => 'age', 'label' => 'Возраст', 'type' => 'number', 'value' => '', 'required' => true, 'isValid' => true]
+        ]; // Возвращение шаблона полей формы
     }
 
     public function getHtml(): string {

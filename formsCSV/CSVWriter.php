@@ -23,4 +23,3 @@ class CSVWriter { // ќбъ€вление класса CSVWriter.
     }
 }
 
-

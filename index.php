@@ -7,21 +7,20 @@ use data\HomePage;
 use data\Table;
 use db\Database;
 use data\CSVTable;
-use data\CSVEditor;
-use formsCSV\CSVWriter;
 use formsCSV\AddRecord;
+use forms\Form;
 
 function router(string $uri): PageInterface {
     $config = new Config('config.ini'); // Создание объекта конфигурации
     $database = new Database($config); // Создание объекта базы данных с использованием конфигурации
     $csvEditor = new \data\CSVEditor('otherFiles/OpenDocument.csv'); // Создание объекта для работы с CSV-файлом
-    $addRecordPage = new AddRecord('otherFiles/OpenDocument.csv'); // Создание объекта для добавления записи в CSV-файл
+    $addRecordPage = new AddRecord($database, 'otherFiles/OpenDocument.csv'); // Создание объекта для добавления записи в CSV-файл
     return match ($uri) {
         '/table' => new Table(new Database(new Config('config.ini'))), // Создание объекта таблицы с использованием базы данных
         '/csv' => new CSVTable('otherFiles/OpenDocument.csv'), // Создание объекта таблицы для CSV-файла
         '/' => new HomePage(), // Создание объекта домашней страницы
-        '/form' => new forms\Form(new Database(new Config('config.ini'))), // Создание объекта формы с использованием базы данных
-        '/add_record' => new formsCSV\AddRecord('otherFiles/OpenDocument.csv'), // Создание объекта для добавления записи в CSV-файл
+        '/form' => new Form(new Database(new Config('config.ini'))), // Создание объекта формы с использованием базы данных
+        '/add_record' => $addRecordPage, // Создание объекта для добавления записи в CSV-файл
         default => new NotFoundHttp() // Создание объекта страницы 404
     };
 }
@@ -39,9 +38,6 @@ if ($searchInPage) {
     if (isset($_GET['delete_username'])) { // Проверка наличия параметра delete_username в GET-запросе
         $csvTable = new CSVTable('otherFiles/OpenDocument.csv'); // Создание объекта таблицы для CSV-файла
         $csvTable->deleteByUsername($_GET['delete_username']); // Удаление записи по имени пользователя
-    }
-    if ($result instanceof formsCSV\AddRecord) { // Проверка, является ли результат объектом AddRecord
-        $result->handlePost(); // Обработка POST-запроса
     }
 
     echo $result->getHtml(); // Вывод HTML-кода страницы

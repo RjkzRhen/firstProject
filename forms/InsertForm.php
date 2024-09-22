@@ -1,19 +1,14 @@
 <?php
 namespace forms;
 
-use config\Config;
-use data\CSVEditor;
 use db\Database;
 
-$config = new Config('config.ini'); // Создание объекта конфигурации
-$db = new Database($config); // Создание объекта базы данных с использованием конфигурации
+class InsertForm extends AbstractForm {
+    public function __construct(Database $db) {
+        parent::__construct($db); // Вызов конструктора родительского класса
+    }
 
-/**
- * @method getDataFromFormAndUpdateTableTemplate()
- */
-class InsertForm {
-
-    public function getTemplate(): array {
+    protected function getTemplate(): array {
         return [
             ['id' => 'last_name', 'name' => 'last_name', 'label' => 'Фамилия', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
             ['id' => 'first_name', 'name' => 'first_name', 'label' => 'Имя', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
@@ -22,54 +17,30 @@ class InsertForm {
         ]; // Возвращение шаблона полей формы
     }
 
-    public function getDataFromFormAndUpdateTemplate(): array {
-        $fields = $this->getTemplate(); // Получение шаблона полей формы
-        $result = [];
-        foreach ($fields as $field) { // Перебор полей формы
-            if (empty($_POST[$field['name']])) { // Проверка, пустое ли поле в POST-запросе
-                $field['value'] = ''; // Установка значения поля в пустую строку
-                $field['isValid'] = false; // Установка флага валидности в false
-            } else {
-                $field['value'] = $_POST[$field['name']]; // Установка значения поля из POST-запроса
-                $field['isValid'] = true; // Установка флага валидности в true
-            }
-            $result[] = $field; // Добавление поля в результирующий массив
+    public function getHtml(): string {
+        $html = '<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>Добавление пользователя</title>
+    <style type="text/css">
+        .error { border: 2px solid #ff0000; }
+        .req:valid { border: 2px solid #000000; }
+        body { font-family: Arial, sans-serif; background-color: #f0f0f0; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        form { background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); width: 400px; }
+        label { font-weight: bold; margin-bottom: 5px; }
+        input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        input.req { outline: none; }
+        input[type="submit"] { background-color: #007bff; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+    </style>
+    </head>
+    <body>
+    <form action="/form" method="post" id="userForm">';
+        foreach ($this->fields as $field) { // Перебор всех полей формы
+            $class = $field['isValid'] ? "req" : "error"; // Определение класса для поля в зависимости от валидности
+            $html .= '<label for="' . $field['id'] . '">' . $field['label'] . ':</label>'; // Добавление метки для поля
+            $html .= '<input type="' . $field['type'] . '" id="' . $field['id'] . '" name="' . $field['name'] . '" value="' . $field['value'] .'" class="'.$class.'"><br>'; // Добавление поля ввода
         }
-        return $result; // Возвращение обновленного шаблона полей формы
-    }
-
-    public function insertIntoTable(array $dataTemplate, $con): void {
-        $columns = implode(", ", array_map(function($item) {
-            return "`" . $item['name'] . "`";
-        }, $dataTemplate)); // Формирование строки с именами столбцов
-
-        $values = implode(", ", array_map(function($item) use ($con) {
-            return "'" . $con->real_escape_string($item['value']) . "'";
-        }, $dataTemplate)); // Формирование строки со значениями, экранированными для безопасности
-
-        $sql = "INSERT INTO `name` ($columns) VALUES ($values)"; // Формирование SQL-запроса для вставки данных
-
-        if ($con->query($sql)) { // Выполнение SQL-запроса
-            header("Location: /table"); // Перенаправление на страницу таблицы
-            exit; // Завершение скрипта
-        } else {
-            echo "Ошибка: " . $sql . "<br>" . $con->error; // Вывод ошибки, если запрос не выполнен
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function handleRequest(): array {
-        if (isset($_POST['submit'])) { // Проверка, была ли отправлена форма
-            $fields = $this->getDataFromFormAndUpdateTemplate(); // Извлекает и обновляет данные формы
-
-        } else {
-            $fields = $this->getTemplate(); // Получает шаблон формы с пустыми значениями, если форма не отправлена
-        }
-        return $fields; // Возвращает поля формы
+        $html .= '<input type="submit" name="submit" value="Добавить пользователя" id="button">'; // Добавление кнопки отправки формы
+        $html .= '</form></body></html>';
+        return $html; // Возвращение сгенерированного HTML
     }
 }
-/*
- * handleRequest
- */
