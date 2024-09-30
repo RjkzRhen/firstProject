@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: text/html; charset=utf-8');
 include 'autoload.php'; // Подключение автозагрузчика классов
 require 'vendor/autoload.php'; // Подключение автозагрузчика зависимостей
 

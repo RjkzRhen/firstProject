@@ -4,80 +4,80 @@ namespace forms;
 use db\Database;
 
 abstract class AbstractForm {
-    protected array $fields; // Объявление свойства для хранения полей формы
-    protected Database $db; // Объявление свойства для хранения объекта Database
+    protected array $fields; // РћР±СЉСЏРІР»РµРЅРёРµ СЃРІРѕР№СЃС‚РІР° РґР»СЏ С…СЂР°РЅРµРЅРёСЏ РїРѕР»РµР№ С„РѕСЂРјС‹
+    protected Database $db; // РћР±СЉСЏРІР»РµРЅРёРµ СЃРІРѕР№СЃС‚РІР° РґР»СЏ С…СЂР°РЅРµРЅРёСЏ РѕР±СЉРµРєС‚Р° Database
 
     public function __construct(Database $db) {
-        $this->db = $db; // Присваивание переданного объекта Database свойству $db
-        $this->fields = $this->handleRequest(); // Обработка запроса и получение полей формы
+        $this->db = $db; // РџСЂРёСЃРІР°РёРІР°РЅРёРµ РїРµСЂРµРґР°РЅРЅРѕРіРѕ РѕР±СЉРµРєС‚Р° Database СЃРІРѕР№СЃС‚РІСѓ $db
+        $this->fields = $this->handleRequest(); // РћР±СЂР°Р±РѕС‚РєР° Р·Р°РїСЂРѕСЃР° Рё РїРѕР»СѓС‡РµРЅРёРµ РїРѕР»РµР№ С„РѕСЂРјС‹
     }
 
-    abstract protected function getTemplate(): array; // Абстрактный метод для получения шаблона полей формы
+    abstract protected function getTemplate(): array; // РђР±СЃС‚СЂР°РєС‚РЅС‹Р№ РјРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ С€Р°Р±Р»РѕРЅР° РїРѕР»РµР№ С„РѕСЂРјС‹
 
     protected function handleRequest(): array {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') { // Проверка, была ли отправлена форма
-            $fields = $this->getDataFromFormAndUpdateTemplate(); // Извлекает и обновляет данные формы
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') { // РџСЂРѕРІРµСЂРєР°, Р±С‹Р»Р° Р»Рё РѕС‚РїСЂР°РІР»РµРЅР° С„РѕСЂРјР°
+            $fields = $this->getDataFromFormAndUpdateTemplate(); // РР·РІР»РµРєР°РµС‚ Рё РѕР±РЅРѕРІР»СЏРµС‚ РґР°РЅРЅС‹Рµ С„РѕСЂРјС‹
         } else {
-            $fields = $this->getTemplate(); // Получает шаблон формы с пустыми значениями, если форма не отправлена
+            $fields = $this->getTemplate(); // РџРѕР»СѓС‡Р°РµС‚ С€Р°Р±Р»РѕРЅ С„РѕСЂРјС‹ СЃ РїСѓСЃС‚С‹РјРё Р·РЅР°С‡РµРЅРёСЏРјРё, РµСЃР»Рё С„РѕСЂРјР° РЅРµ РѕС‚РїСЂР°РІР»РµРЅР°
         }
-        return $fields; // Возвращает поля формы
+        return $fields; // Р’РѕР·РІСЂР°С‰Р°РµС‚ РїРѕР»СЏ С„РѕСЂРјС‹
     }
 
     protected function getDataFromFormAndUpdateTemplate(): array {
-        $fields = $this->getTemplate(); // Получение шаблона полей формы
+        $fields = $this->getTemplate(); // РџРѕР»СѓС‡РµРЅРёРµ С€Р°Р±Р»РѕРЅР° РїРѕР»РµР№ С„РѕСЂРјС‹
         $result = [];
-        foreach ($fields as $field) { // Перебор полей формы
-            $field['value'] = $_POST[$field['name']] ?? ''; // Установка значения поля из POST-запроса или пустой строки
-            $field['isValid'] = !empty($field['value']); // Установка флага валидности в true, если поле не пустое
-            $result[] = $field; // Добавление поля в результирующий массив
+        foreach ($fields as $field) { // РџРµСЂРµР±РѕСЂ РїРѕР»РµР№ С„РѕСЂРјС‹
+            $field['value'] = $_POST[$field['name']] ?? ''; // РЈСЃС‚Р°РЅРѕРІРєР° Р·РЅР°С‡РµРЅРёСЏ РїРѕР»СЏ РёР· POST-Р·Р°РїСЂРѕСЃР° РёР»Рё РїСѓСЃС‚РѕР№ СЃС‚СЂРѕРєРё
+            $field['isValid'] = !empty($field['value']); // РЈСЃС‚Р°РЅРѕРІРєР° С„Р»Р°РіР° РІР°Р»РёРґРЅРѕСЃС‚Рё РІ true, РµСЃР»Рё РїРѕР»Рµ РЅРµ РїСѓСЃС‚РѕРµ
+            $result[] = $field; // Р”РѕР±Р°РІР»РµРЅРёРµ РїРѕР»СЏ РІ СЂРµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ РјР°СЃСЃРёРІ
         }
-        return $result; // Возвращение обновленного шаблона полей формы
+        return $result; // Р’РѕР·РІСЂР°С‰РµРЅРёРµ РѕР±РЅРѕРІР»РµРЅРЅРѕРіРѕ С€Р°Р±Р»РѕРЅР° РїРѕР»РµР№ С„РѕСЂРјС‹
     }
 
     protected function isAllValid(array $dataTemplate): bool {
-        foreach ($dataTemplate as $field) { // Перебор всех полей в шаблоне данных
-            if ($field['required'] && empty($field['value'])) { // Проверка, является ли поле обязательным и пустым
-                return false; // Если поле невалидно, возвращаем false
+        foreach ($dataTemplate as $field) { // РџРµСЂРµР±РѕСЂ РІСЃРµС… РїРѕР»РµР№ РІ С€Р°Р±Р»РѕРЅРµ РґР°РЅРЅС‹С…
+            if ($field['required'] && empty($field['value'])) { // РџСЂРѕРІРµСЂРєР°, СЏРІР»СЏРµС‚СЃСЏ Р»Рё РїРѕР»Рµ РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Рј Рё РїСѓСЃС‚С‹Рј
+                return false; // Р•СЃР»Рё РїРѕР»Рµ РЅРµРІР°Р»РёРґРЅРѕ, РІРѕР·РІСЂР°С‰Р°РµРј false
             }
         }
-        return true; // Если все поля валидны, возвращаем true
+        return true; // Р•СЃР»Рё РІСЃРµ РїРѕР»СЏ РІР°Р»РёРґРЅС‹, РІРѕР·РІСЂР°С‰Р°РµРј true
     }
 
-    abstract public function getHtml(): string; // Абстрактный метод для получения HTML-кода формы
+    abstract public function getHtml(): string; // РђР±СЃС‚СЂР°РєС‚РЅС‹Р№ РјРµС‚РѕРґ РґР»СЏ РїРѕР»СѓС‡РµРЅРёСЏ HTML-РєРѕРґР° С„РѕСЂРјС‹
 
     protected function insertIntoTable(array $dataTemplate, $con): void {
         if ($this instanceof \formsCSV\AddRecord) {
-            // Подготовка данных для записи в CSV.
+            // РџРѕРґРіРѕС‚РѕРІРєР° РґР°РЅРЅС‹С… РґР»СЏ Р·Р°РїРёСЃРё РІ CSV.
             $data = array_map(function ($field) {
                 return $field['value'];
             }, $dataTemplate);
 
-            // Попытка записи в CSV файл.
+            // РџРѕРїС‹С‚РєР° Р·Р°РїРёСЃРё РІ CSV С„Р°Р№Р».
             try {
                 $csvWriter = new \formsCSV\CSVWriter('otherFiles/OpenDocument.csv');
                 $csvWriter->addRecord($data);
-                // Перенаправление на страницу CSV-таблицы.
+                // РџРµСЂРµРЅР°РїСЂР°РІР»РµРЅРёРµ РЅР° СЃС‚СЂР°РЅРёС†Сѓ CSV-С‚Р°Р±Р»РёС†С‹.
                 header("Location: /csv");
                 exit;
-            } catch (\Exception $e) { // Обработка возможных исключений.
+            } catch (\Exception $e) { // РћР±СЂР°Р±РѕС‚РєР° РІРѕР·РјРѕР¶РЅС‹С… РёСЃРєР»СЋС‡РµРЅРёР№.
                 echo "Error: " . $e->getMessage();
             }
         } else {
             $columns = implode(", ", array_map(function($item) {
                 return "`" . $item['name'] . "`";
-            }, $dataTemplate)); // Формирование строки с именами столбцов
+            }, $dataTemplate)); // Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ СЃС‚СЂРѕРєРё СЃ РёРјРµРЅР°РјРё СЃС‚РѕР»Р±С†РѕРІ
 
             $values = implode(", ", array_map(function($item) use ($con) {
                 return "'" . $con->real_escape_string($item['value']) . "'";
-            }, $dataTemplate)); // Формирование строки со значениями, экранированными для безопасности
+            }, $dataTemplate)); // Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ СЃС‚СЂРѕРєРё СЃРѕ Р·РЅР°С‡РµРЅРёСЏРјРё, СЌРєСЂР°РЅРёСЂРѕРІР°РЅРЅС‹РјРё РґР»СЏ Р±РµР·РѕРїР°СЃРЅРѕСЃС‚Рё
 
-            $sql = "INSERT INTO `name` ($columns) VALUES ($values)"; // Формирование SQL-запроса для вставки данных
+            $sql = "INSERT INTO `name` ($columns) VALUES ($values)"; // Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ SQL-Р·Р°РїСЂРѕСЃР° РґР»СЏ РІСЃС‚Р°РІРєРё РґР°РЅРЅС‹С…
 
-            if ($con->query($sql)) { // Выполнение SQL-запроса
-                header("Location: /table"); // Перенаправление на страницу таблицы
-                exit; // Завершение скрипта
+            if ($con->query($sql)) { // Р’С‹РїРѕР»РЅРµРЅРёРµ SQL-Р·Р°РїСЂРѕСЃР°
+                header("Location: /table"); // РџРµСЂРµРЅР°РїСЂР°РІР»РµРЅРёРµ РЅР° СЃС‚СЂР°РЅРёС†Сѓ С‚Р°Р±Р»РёС†С‹
+                exit; // Р—Р°РІРµСЂС€РµРЅРёРµ СЃРєСЂРёРїС‚Р°
             } else {
-                echo "Ошибка: " . $sql . "<br>" . $con->error; // Вывод ошибки, если запрос не выполнен
+                echo "РћС€РёР±РєР°: " . $sql . "<br>" . $con->error; // Р’С‹РІРѕРґ РѕС€РёР±РєРё, РµСЃР»Рё Р·Р°РїСЂРѕСЃ РЅРµ РІС‹РїРѕР»РЅРµРЅ
             }
         }
     }
