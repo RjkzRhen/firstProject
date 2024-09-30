@@ -4,10 +4,6 @@ namespace forms;
 use db\Database;
 
 class InsertForm extends AbstractForm {
-    public function __construct(Database $db) {
-        parent::__construct($db); // Вызов конструктора родительского класса
-    }
-
     protected function getTemplate(): array {
         return [
             ['id' => 'last_name', 'name' => 'last_name', 'label' => 'Фамилия', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],

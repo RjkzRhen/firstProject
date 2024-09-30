@@ -10,6 +10,9 @@ abstract class AbstractForm {
     public function __construct(Database $db) {
         $this->db = $db; // Присваивание переданного объекта Database свойству $db
         $this->fields = $this->handleRequest(); // Обработка запроса и получение полей формы
+        if ($this->isAllValid($this->fields)) { // Проверка валидности всех полей
+            $this->insertIntoTable($this->fields, $this->db->conn); // Вставка данных в таблицу, если все поля валидны
+        }
     }
 
     abstract protected function getTemplate(): array; // Абстрактный метод для получения шаблона полей формы

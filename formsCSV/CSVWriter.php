@@ -22,4 +22,3 @@ class CSVWriter { // Объявление класса CSVWriter.
         fclose($handle); // Закрывает файл.
     }
 }
-

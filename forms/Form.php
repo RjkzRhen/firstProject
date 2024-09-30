@@ -5,13 +5,6 @@ use db\Database;
 use PageInterface;
 
 class Form extends AbstractForm implements PageInterface {
-    public function __construct(Database $db) {
-        parent::__construct($db); // Вызов конструктора родительского класса
-        if ($this->isAllValid($this->fields)) { // Проверка валидности всех полей
-            $this->insertIntoTable($this->fields, $this->db->conn); // Вставка данных в таблицу, если все поля валидны
-        }
-    }
-
     protected function getTemplate(): array {
         return [
             ['id' => 'last_name', 'name' => 'last_name', 'label' => 'Фамилия', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],

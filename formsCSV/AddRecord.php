@@ -7,10 +7,6 @@ use formsCSV\CSVWriter;
 use PageInterface;
 
 class AddRecord extends AbstractForm implements PageInterface {
-    public function __construct(Database $db) {
-        parent::__construct($db); // Вызов конструктора родительского класса
-    }
-
     protected function getTemplate(): array {
         return [
             ['id' => 'username', 'name' => 'username', 'label' => 'Имя пользователя', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
@@ -22,12 +18,6 @@ class AddRecord extends AbstractForm implements PageInterface {
     }
 
     public function getHtml(): string {
-        $fields = $this->handleRequest(); // Обработка запроса и получение полей формы
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $this->isAllValid($fields)) {
-            $this->insertIntoTable($fields, $this->db->conn); // Вставка данных в таблицу, если все поля валидны
-        }
-
         $html = '<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <title>Add an entry to the table</title>
@@ -46,7 +36,7 @@ class AddRecord extends AbstractForm implements PageInterface {
 <body>
     <form method="post">';
 
-        foreach ($fields as $field) { // Перебор полей для создания элементов формы.
+        foreach ($this->fields as $field) { // Перебор полей для создания элементов формы.
             $class = $field['isValid'] ? "req" : "error";  // Применение класса в зависимости от валидности.
             $html .= '<label for="' . $field['name'] . '">' . ucfirst($field['name']) . ':</label>';
             $html .= '<input type="text" name="' . $field['name'] . '" value="' . htmlspecialchars($field['value']) . '" class="' . $class . '"><br>';
