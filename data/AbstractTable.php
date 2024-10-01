@@ -77,14 +77,7 @@ abstract class AbstractTable
             "<input type='submit' value='Фильтровать'>\n" .
             "</form>\n"; // Возвращает строку с HTML-кодом формы фильтрации по минимальному возрасту
     }
-
-    // Метод для конвертации кодировки строки в UTF-8
-    protected function convertEncoding($value): string
-    {
-        return mb_convert_encoding($value, 'UTF-8', 'Windows-1251'); // Конвертирует строку из кодировки Windows-1251 в UTF-8
-    }
-
-    // Метод для получения заголовков столбцов таблицы
+        // Метод для получения заголовков столбцов таблицы
     protected function getTableHeaders(): string
     {
         $headers = '';
