@@ -7,9 +7,7 @@ abstract class AbstractTable
     protected $data; // Объявление свойства для хранения данных таблицы
     protected int $minAge; // Объявление свойства для хранения минимального возраста
 
-    const array TABLE_HEADERS = ['ID', 'Фамилия', 'Имя', 'Отчество', 'Возраст', 'Действия']; // Константа с заголовками столбцов таблицы
-
-    abstract public function loadData($filePath): void; // Объявление абстрактного метода для загрузки данных
+    const TABLE_HEADERS = ['ID', 'Фамилия', 'Имя', 'Отчество', 'Возраст', 'Действия']; // Константа с заголовками столбцов таблицы
 
     abstract public function getHtml(): string; // Объявление абстрактного метода для получения HTML-кода таблицы
 

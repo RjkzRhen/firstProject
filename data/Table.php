@@ -21,8 +21,4 @@ class Table extends AbstractTable implements PageInterface {
         $html .= $this->getHtmlEnd(); // Используем общий метод для закрывающей части HTML-кода
         return $html; // Возвращение сгенерированного HTML-кода
     }
-
-    public function loadData($filePath): void {
-        // TODO: Implement loadData() method. // Метод должен быть реализован в будущем
-    }
 }
