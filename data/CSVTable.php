@@ -28,6 +28,11 @@ class CSVTable extends AbstractTable implements PageInterface {
         fclose($handle); // Закрытие файла
     }
 
+    public function convertEncoding($value) {
+        // Пример конвертации кодировки (замените 'UTF-8' и 'Windows-1251' на нужные кодировки)
+        return mb_convert_encoding($value, 'UTF-8', 'Windows-1251');
+    }
+
     public function getHtml(): string {
         $html = $this->getHtmlStart(); // Используем общий метод для начальной части HTML-кода
         $html .= "<table>\n" . $this->getTableHeaders(); // Добавление заголовков таблицы
@@ -39,7 +44,7 @@ class CSVTable extends AbstractTable implements PageInterface {
             if ($index == 0) continue; // Пропуск первой строки (заголовков)
             $html .= $this->generateTableRow($row); // Генерация строки таблицы
             $username = htmlspecialchars($row[0]); // Получение имени пользователя
-            $html .= "<td><a href='index.php?delete_username={$username}'>Удалить</a></td>\n</tr>\n"; // Добавление ссылки для удаления
+            $html .= "<td><a href='?delete_username={$username}'>Удалить</a></td>\n</tr>\n"; // Добавление ссылки для удаления
         }
         $html .= "</table>\n"; // Закрытие таблицы
         $html .= $this->getHtmlEnd(); // Используем общий метод для закрывающей части HTML-кода

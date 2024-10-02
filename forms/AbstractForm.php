@@ -54,8 +54,6 @@ abstract class AbstractForm {
             $data = array_map(function ($field) {
                 return $field['value'];
             }, $dataTemplate);
-
-            // Попытка записи в CSV файл.
             try {
                 $csvWriter = new \formsCSV\CSVWriter('otherFiles/OpenDocument.csv');
                 $csvWriter->addRecord($data);

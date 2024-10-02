@@ -1,6 +1,8 @@
 <?php
 namespace formsCSV; // Определяет пространство имен для класса CSVWriter.
 
+use Exception;
+
 class CSVWriter { // Объявление класса CSVWriter.
     private $filePath; // Приватное свойство для хранения пути к файлу CSV.
 
