@@ -2,15 +2,17 @@
 
 namespace data;
 
-abstract class AbstractTable
+// Абстрактный класс для таблиц
+abstract class AbstractTable implements DataLoaderInterface
 {
-    protected $data; // Объявление свойства для хранения данных таблицы
-    protected int $minAge; // Объявление свойства для хранения минимального возраста
+    protected $data; // Свойство для хранения данных таблицы
+    protected int $minAge; // Свойство для хранения минимального возраста
 
     const TABLE_HEADERS = ['ID', 'Фамилия', 'Имя', 'Отчество', 'Возраст', 'Действия']; // Константа с заголовками столбцов таблицы
 
-    abstract public function getHtml(): string; // Объявление абстрактного метода для получения HTML-кода таблицы
+    abstract public function getHtml(): string; // Абстрактный метод для получения HTML-кода таблицы
 
+    // Метод для получения CSS-стилей
     protected function getStyle(): string
     {
         return "<style>
@@ -45,19 +47,19 @@ abstract class AbstractTable
             color: red;
             font-weight: bold;
         }
-        </style>"; // Возвращает строку с CSS-стилями для таблицы
+        </style>";
     }
 
-    // Добавляем общий метод для генерации начальной части HTML-кода
+    // Метод для генерации начальной части HTML-кода
     protected function getHtmlStart(): string
     {
-        return "<!DOCTYPE html>\n<html lang='en'>\n<head>\n<meta charset='UTF-8'>\n<title>Table</title>\n" . $this->getStyle() . "</head>\n<body>\n"; // Возвращает строку с начальной частью HTML-документа
+        return "<!DOCTYPE html>\n<html lang='en'>\n<head>\n<meta charset='UTF-8'>\n<title>Table</title>\n" . $this->getStyle() . "</head>\n<body>\n";
     }
 
-    // Добавляем общий метод для генерации закрывающей части HTML-кода
+    // Метод для генерации закрывающей части HTML-кода
     protected function getHtmlEnd(): string
     {
-        return "</body>\n</html>"; // Возвращает строку с закрывающей частью HTML-документа
+        return "</body>\n</html>";
     }
 
     // Метод для фильтрации данных по минимальному возрасту
@@ -75,16 +77,17 @@ abstract class AbstractTable
             "<label for='minAge'>Минимальный возраст:</label>\n" .
             "<input type='number' id='minAge' name='minAge' value='" . htmlspecialchars($this->minAge) . "'>\n" .
             "<input type='submit' value='Фильтровать'>\n" .
-            "</form>\n"; // Возвращает строку с HTML-кодом формы фильтрации по минимальному возрасту
+            "</form>\n";
     }
-        // Метод для получения заголовков столбцов таблицы
+
+    // Метод для получения заголовков столбцов таблицы
     protected function getTableHeaders(): string
     {
         $headers = '';
-        foreach (self::TABLE_HEADERS as $header) {
+        foreach (static::TABLE_HEADERS as $header) {
             $headers .= "<th>{$header}</th>"; // Генерирует строку с заголовками столбцов таблицы
         }
-        return "<tr>{$headers}</tr>\n"; // Возвращает строку с HTML-кодом заголовков таблицы
+        return "<tr>{$headers}</tr>\n";
     }
 
     // Метод для генерации строки таблицы
@@ -98,6 +101,6 @@ abstract class AbstractTable
             }
             $html .= "<td" . $style . ">" . htmlspecialchars($cell) . "</td>\n"; // Добавление ячейки в HTML
         }
-        return $html; // Возвращает строку с HTML-кодом строки таблицы
+        return $html;
     }
 }

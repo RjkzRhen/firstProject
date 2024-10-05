@@ -4,10 +4,12 @@ namespace data;
 use Exception;
 use PageInterface;
 
-class CSVTable extends AbstractTable implements PageInterface {
-    private CSVEditor $csvEditor; // Объявление свойства для хранения объекта CSVEditor
-    private $filePath; // Объявление свойства для хранения пути к CSV-файлу
+// Класс для работы с CSV-таблицами
+class CSVTable extends AbstractTable implements PageInterface, DataLoaderInterface {
+    private CSVEditor $csvEditor; // Свойство для хранения объекта CSVEditor
+    private $filePath; // Свойство для хранения пути к CSV-файлу
 
+    // Конструктор класса
     public function __construct($filePath) {
         $this->filePath = $filePath; // Присваивание переданного пути к CSV-файлу свойству $filePath
         $this->loadData($this->filePath); // Загрузка данных из CSV-файла
@@ -15,11 +17,22 @@ class CSVTable extends AbstractTable implements PageInterface {
         $this->minAge = isset($_GET['minAge']) ? intval($_GET['minAge']) : 0; // Инициализация свойства $minAge
     }
 
-    public function loadData($filePath): void {
+    // Метод для загрузки данных из CSV-файла
+
+    /**
+     * @throws Exception
+     */
+    public function loadData($source): void {
+        $filePath = $source; // Присваиваем $source в $filePath для удобства
+        if (!file_exists($filePath)) { // Проверка существования файла
+            throw new Exception("Файл не найден: " . $filePath); // Выброс исключения, если файл не найден
+        }
+
         $handle = fopen($filePath, "r"); // Открытие CSV-файла для чтения
         if ($handle === false) {
             throw new Exception("Ошибка при открытии файла: " . $filePath); // Выброс исключения в случае ошибки
         }
+
         $this->data = [];
         while (($line = fgetcsv($handle, 1000, ";")) !== false) { // Чтение строк из CSV-файла
             $line = array_map([$this, 'convertEncoding'], $line); // Конвертация кодировки значений
@@ -28,11 +41,13 @@ class CSVTable extends AbstractTable implements PageInterface {
         fclose($handle); // Закрытие файла
     }
 
-    public function convertEncoding($value) {
-        // Пример конвертации кодировки (замените 'UTF-8' и 'Windows-1251' на нужные кодировки)
+    // Метод для конвертации кодировки значений
+    public function convertEncoding($value): array|false|string|null
+    {
         return mb_convert_encoding($value, 'UTF-8', 'Windows-1251');
     }
 
+    // Метод для получения HTML-кода таблицы
     public function getHtml(): string {
         $html = $this->getHtmlStart(); // Используем общий метод для начальной части HTML-кода
         $html .= "<table>\n" . $this->getTableHeaders(); // Добавление заголовков таблицы
@@ -51,6 +66,11 @@ class CSVTable extends AbstractTable implements PageInterface {
         return $html; // Возвращение сгенерированного HTML-кода
     }
 
+    // Метод для удаления записи по имени пользователя
+
+    /**
+     * @throws Exception
+     */
     public function deleteByUsername($username): void {
         $this->csvEditor->deleteByUsername($username); // Удаление записи по имени пользователя
         $this->loadData($this->filePath); // Перезагрузка данных после удаления

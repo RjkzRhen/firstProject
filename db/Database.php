@@ -4,19 +4,22 @@ namespace db;
 use config\Config;
 use mysqli;
 use mysqli_stmt;
+use Exception;
 
+// Класс для работы с базой данных
 class Database
 {
-    public ?mysqli $conn; // Объявление свойства для хранения соединения с базой данных
+    public ?mysqli $conn; // Свойство для хранения соединения с базой данных
+    private Config $config; // Свойство для хранения объекта конфигурации
 
-    private Config $config; // Объявление свойства для хранения объекта конфигурации
-
+    // Конструктор класса
     public function __construct(Config $config)
     {
         $this->config = $config; // Присваивание переданного объекта конфигурации свойству $config
         $this->conn = $this->getConnection(); // Получение соединения с базой данных и присваивание его свойству $conn
     }
 
+    // Метод для получения соединения с базой данных
     private function getConnection()
     {
         $conn = new mysqli($this->config->getServername(), $this->config->getUsername(), $this->config->getPassword(), $this->config->getDbname()); // Создание соединения с базой данных
@@ -27,16 +30,20 @@ class Database
         return $conn; // Возвращение соединения
     }
 
+    // Метод для выполнения SQL-запросов
     public function executeSQL($sql, $params = null): false|mysqli_stmt
-    { //предназначена для выполнения SQL-запросов
+    {
         $stmt = $this->conn->prepare($sql); // Подготовка SQL-запроса
         if ($params) { // Если переданы параметры
             $stmt->bind_param($params['types'], ...$params['values']); // Привязка параметров к запросу
         }
-        $stmt->execute(); // Выполнение запроса
+        if (!$stmt->execute()) { // Выполнение запроса
+            throw new Exception("Ошибка выполнения SQL-запроса: " . $stmt->error); // Выброс исключения в случае ошибки
+        }
         return $stmt; // Возвращение объекта подготовленного запроса
     }
 
+    // Метод для получения строк таблицы из базы данных
     public function getTableRows(int $minAge): string
     {
         $sql = "SELECT * FROM `name` WHERE age >= ?"; // SQL-запрос с параметром для минимального возраста
@@ -63,6 +70,7 @@ class Database
         return $tableHtml; // Возвращение сгенерированного HTML-кода таблицы
     }
 
+    // Метод для удаления записи по ID
     public function deleteRecord($id): void
     {
         $sql = "DELETE FROM `name` WHERE id = ?"; // SQL-запрос для удаления записи по ID
@@ -70,9 +78,7 @@ class Database
 
         $stmt = $this->executeSQL($sql, $params); // Выполнение запроса
 
-        if ($stmt) { // Проверка успешности выполнения запроса
-            echo " "; // Вывод пустой строки (можно удалить)
-        } else {
+        if (!$stmt) { // Проверка успешности выполнения запроса
             echo "Ошибка: " . $this->conn->error; // Вывод ошибки, если запрос не выполнен
         }
     }
