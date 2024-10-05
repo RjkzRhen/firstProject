@@ -31,6 +31,10 @@ class Database
     }
 
     // Метод для выполнения SQL-запросов
+
+    /**
+     * @throws Exception
+     */
     public function executeSQL($sql, $params = null): false|mysqli_stmt
     {
         $stmt = $this->conn->prepare($sql); // Подготовка SQL-запроса
@@ -44,6 +48,12 @@ class Database
     }
 
     // Метод для получения строк таблицы из базы данных
+    // Используется в методе loadData класса Table
+    /**
+     * @param int $minAge
+     * @return string
+     * @throws Exception
+     */
     public function getTableRows(int $minAge): string
     {
         $sql = "SELECT * FROM `name` WHERE age >= ?"; // SQL-запрос с параметром для минимального возраста

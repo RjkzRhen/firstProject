@@ -1,15 +1,15 @@
 <?php
 namespace data;
 
-use db\Database;
+use db\Database as Db;
 use PageInterface;
 
 // Класс для работы с таблицами базы данных
 class Table extends AbstractTable implements PageInterface, DataLoaderInterface {
-    private Database $db; // Свойство для хранения объекта Database
+    private Db $db; // Свойство для хранения объекта Database
 
     // Конструктор класса
-    public function __construct(Database $db) {
+    public function __construct(Db $db) {
         $this->db = $db; // Присваивание переданного объекта Database свойству $db
         $this->minAge = isset($_GET['minAge']) ? intval($_GET['minAge']) : 0; // Получение минимального возраста из GET-параметра
         $this->loadData($this->db); // Загрузка данных из базы данных
