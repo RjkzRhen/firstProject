@@ -44,4 +44,10 @@ class Config
     {
         return $this->dbname;
     }
+
+
+    public static function getProjectDir(): string
+    {
+        return dirname(__DIR__);
+    }
 }

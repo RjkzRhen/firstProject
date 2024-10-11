@@ -2,8 +2,8 @@
 
 namespace data;
 
-// Интерфейс для загрузки данных
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 interface DataLoaderInterface
 {
-    public function loadData($source): void;
+    public function loadData(): void;
 }
