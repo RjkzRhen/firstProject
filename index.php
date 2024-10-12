@@ -7,18 +7,23 @@ use config\Config;
 use data\HomePage;
 use data\Table;
 use db\Database;
+use data\CSVLoader;
 use data\CSVTable;
 use formsCSV\AddRecord;
 use forms\Form;
 
+/**
+ * @throws Exception
+ */
 function router(string $uri): PageInterface {
     $config = new Config('config.ini'); // Создание объекта конфигурации
     $database = new Database($config); // Создание объекта базы данных с использованием конфигурации
     $csvEditor = new \data\CSVEditor('otherFiles/OpenDocument.csv'); // Создание объекта для работы с CSV-файлом
     $addRecordPage = new AddRecord($database, 'otherFiles/OpenDocument.csv'); // Создание объекта для добавления записи в CSV-файл
+
     return match ($uri) {
         '/table' => new Table(new Database(new Config('config.ini'))), // Создание объекта таблицы с использованием базы данных
-        '/csv' => new CSVTable('otherFiles/OpenDocument.csv'), // Создание объекта таблицы для CSV-файла
+        '/csv' => new CSVTable(new CSVLoader('otherFiles/OpenDocument.csv')), // Создание объекта таблицы для CSV-файла
         '/' => new HomePage(), // Создание объекта домашней страницы
         '/form' => new Form(new Database(new Config('config.ini'))), // Создание объекта формы с использованием базы данных
         '/add_record' => $addRecordPage, // Создание объекта для добавления записи в CSV-файл
@@ -37,8 +42,14 @@ if ($searchInPage) {
         $db->deleteRecord((int)$_GET['deleteId']); // Удаление записи по ID
     }
     if (isset($_GET['delete_username'])) { // Проверка наличия параметра delete_username в GET-запросе
-        $csvTable = new CSVTable('otherFiles/OpenDocument.csv'); // Создание объекта таблицы для CSV-файла
-        $csvTable->deleteByUsername($_GET['delete_username']); // Удаление записи по имени пользователя
+        try {
+            $csvTable = new CSVTable(new CSVLoader('otherFiles/OpenDocument.csv'));
+        } catch (Exception $e) {
+        } // Создание объекта таблицы для CSV-файла
+        try {
+            $csvTable->deleteByUsername($_GET['delete_username']);
+        } catch (Exception $e) {
+        } // Удаление записи по имени пользователя
     }
 
     echo $result->getHtml(); // Вывод HTML-кода страницы

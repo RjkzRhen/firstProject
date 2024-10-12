@@ -4,7 +4,7 @@ namespace forms;
 use db\Database;
 use PageInterface;
 
-class Form extends AbstractForm implements PageInterface {
+class Form extends AbstractForm {
 protected function getTemplate(): array {
 return [
 ['id' => 'last_name', 'name' => 'last_name', 'label' => 'Фамилия', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
