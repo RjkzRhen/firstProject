@@ -1,13 +1,51 @@
 <?php
 namespace data;
 // Абстрактный класс для таблиц
-use PageInterface;
-abstract class AbstractTable implements PageInterface, DataLoaderInterface
+
+use config\Config;
+
+abstract class AbstractTable implements DataLoaderInterface
 {
-    protected array $data = []; // Свойство для хранения данных таблицы
-    protected int $minAge;      // Свойство для фильтрации по минимальному возрасту
-    public const TABLE_HEADERS = ['ID', 'Фамилия', 'Имя', 'Отчество', 'Возраст', 'Действия']; // Константа с заголовками таблицы
+
     public function __construct()
+    {
+        $this->loadData();
+    }
+
+    protected array $data; // Свойство для хранения данных таблицы
+    protected int $minAge; // Свойство для хранения минимального возраста
+
+//    const TABLE_HEADERS = ['ID', 'Фамилия', 'Имя', 'Отчество', 'Возраст', 'Действия']; // Константа с заголовками столбцов таблицы
+
+    abstract protected function getTableHeaders(): array;
+
+
+    //abstract public function getHtml(): string; // Абстрактный метод для получения HTML-кода таблицы
+
+    public function getHtml(): string
+    {
+        $html = file_get_contents(Config::getProjectDir() . '/templates/table.html');
+        return str_replace([
+            '{{ style }}',
+            '{{ table }}',
+        ], [
+            $this->getStyle(),
+            $this->getHtmlTable(),
+        ],
+            $html
+        );
+    }
+
+    protected function getHtmlTable(): string
+    {
+        $html = "<table>";
+        $html .= $this->getTableHeadersHtml();
+        $html .= $this->getTableBodyHtml();
+        $html .= "</table>";
+        return $html;
+    }
+    // Метод для получения CSS-стилей
+    protected function getStyle(): string
     {
         $this->minAge = isset($_GET['minAge']) ? intval($_GET['minAge']) : 0; // Инициализация свойства $minAge из GET-параметра или по умолчанию 0
     }
@@ -32,29 +70,9 @@ abstract class AbstractTable implements PageInterface, DataLoaderInterface
     </style>";
     }
 
-    /**
-     * Генерация начальной части HTML-кода
-     * Используется для начала формирования страницы
-     */
-    final protected function getHtmlStart(): string
-    {
-        return "<!DOCTYPE html>\n<html lang='en'>\n<head>\n<meta charset='UTF-8'>\n<title>Table</title>\n" . $this->getStyle() . "</head>\n<body>\n";
-    }
 
-    /**
-     * Генерация закрывающей части HTML-кода
-     * Используется для завершения страницы
-     */
-    final protected function getHtmlEnd(): string
-    {
-        return "</body>\n</html>";
-    }
-
-    /**
-     * Фильтрация данных по минимальному возрасту
-     * Логика фильтрации будет одинаковой для всех таблиц
-     */
-    final protected function filterDataByMinAge(array $data): array
+    // Метод для фильтрации данных по минимальному возрасту
+    protected function filterDataByMinAge($data): array
     {
         return array_filter($data, function ($row) {
             // Предполагаем, что возраст находится в 5-м столбце (индекс 4)
@@ -75,24 +93,39 @@ abstract class AbstractTable implements PageInterface, DataLoaderInterface
                 </form>\n";
     }
 
-    /**
-     * Генерация заголовков таблицы
-     * Общий для всех таблиц
-     */
-    final protected function getTableHeaders(): string
+
+    // Метод для получения заголовков столбцов таблицы
+    protected function getTableHeadersHtml(): string
     {
         $headers = '';
-        foreach (static::TABLE_HEADERS as $header) {
-            $headers .= "<th>{$header}</th>"; // Генерация заголовков
+        foreach ($this->getTableHeaders() as $header) {
+            $headers .= "<th>{$header}</th>"; // Генерирует строку с заголовками столбцов таблицы
         }
         return "<tr>{$headers}</tr>\n";
     }
 
-    /**
-     * Генерация строки таблицы
-     * Включает стилизацию возраста для пользователей старше 50
-     */
-    final protected function generateTableRow(array $row): string
+
+    protected function getTableBodyHtml(): string
+    {
+        $html = '';
+        foreach ($this->data as $key => $row) {
+            $html .= '<tr>';
+            foreach ($row as $cellIndex => $cell) {
+                $html .= $this->generateTableCell($key, $cellIndex, $cell);
+            }
+            $html .= '</tr>';
+
+        }
+        return $html;
+    }
+
+    protected function generateTableCell(mixed $rowIndex, mixed $cellIndex, mixed $cell): string
+    {
+        return "<td>" . htmlspecialchars($cell) . "</td>";
+    }
+
+    // Метод для генерации строки таблицы
+    protected function generateTableRow(array $row): string
     {
         $html = "<tr>\n";
         foreach ($row as $cellIndex => $cell) {
