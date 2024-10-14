@@ -6,7 +6,7 @@ use db\Database;
 use formsCSV\CSVWriter;
 use PageInterface;
 
-class AddRecord extends AbstractForm implements PageInterface {
+class AddRecord extends AbstractForm  {
     protected function getTemplate(): array {
         return [
             ['id' => 'username', 'name' => 'username', 'label' => 'Имя пользователя', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],

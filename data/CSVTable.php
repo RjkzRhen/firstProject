@@ -5,9 +5,12 @@ use Exception;
 use PageInterface;
 
 // Класс для работы с CSV-таблицами
+
 class CSVTable extends AbstractTable implements PageInterface {
+
     private CSVEditor $csvEditor; // Свойство для хранения объекта CSVEditor
-    private $filePath; // Свойство для хранения пути к CSV-файлу
+    private CSVLoader $csvLoader; // Свойство для хранения объекта CSVLoader
+
 
     // Конструктор класса
     public function __construct($filePath) {
@@ -18,12 +21,11 @@ class CSVTable extends AbstractTable implements PageInterface {
         parent::__construct();
     }
 
-    // Метод для загрузки данных из CSV-файла
-
     /**
      * @throws Exception
      */
     public function loadData(): void
+
     {
         if (!file_exists($this->filePath)) { // Проверка существования файла
             throw new Exception("Файл не найден: " . $this->filePath); // Выброс исключения, если файл не найден
@@ -45,8 +47,9 @@ class CSVTable extends AbstractTable implements PageInterface {
     // Метод для конвертации кодировки значений
     public function convertEncoding($value): array|false|string|null
     {
-        return mb_convert_encoding($value, 'UTF-8', 'Windows-1251');
+        $this->data = $this->csvLoader->loadData(); // Загрузка данных из CSV-файла
     }
+
 
     // Метод для получения HTML-кода таблицы
 //    public function getHtml(): string {
@@ -67,14 +70,11 @@ class CSVTable extends AbstractTable implements PageInterface {
 //        return $html; // Возвращение сгенерированного HTML-кода
 //    }
 
-    // Метод для удаления записи по имени пользователя
 
-    /**
-     * @throws Exception
-     */
-    public function deleteByUsername($username): void {
+    public function deleteByUsername($username): void
+    {
         $this->csvEditor->deleteByUsername($username); // Удаление записи по имени пользователя
-        $this->loadData($this->filePath); // Перезагрузка данных после удаления
+        $this->loadData(); // Перезагрузка данных после удаления
     }
 
     protected function getTableHeaders(): array

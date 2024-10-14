@@ -1,8 +1,7 @@
 <?php
-
 namespace data;
-
 // Абстрактный класс для таблиц
+
 use config\Config;
 
 abstract class AbstractTable implements DataLoaderInterface
@@ -48,58 +47,52 @@ abstract class AbstractTable implements DataLoaderInterface
     // Метод для получения CSS-стилей
     protected function getStyle(): string
     {
-        return "<style>
-        body {
-            font-family: 'Times New Roman', Times, serif;
-            background-color: #f7f7f7;
-            margin: 0;
-            padding: 0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        th {
-            background-color: #f2f2f2;
-            color: #333;
-            text-transform: uppercase;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        .age-over-50 {
-            color: red;
-            font-weight: bold;
-        }
-        </style>";
+        $this->minAge = isset($_GET['minAge']) ? intval($_GET['minAge']) : 0; // Инициализация свойства $minAge из GET-параметра или по умолчанию 0
     }
+    // Абстрактный метод для загрузки данных
+    abstract public function loadData($source): void; // Метод должен быть реализован в дочерних классах для загрузки данных из источника
+    // Абстрактный метод для получения HTML-кода таблицы
+    abstract public function getHtml(): string; // Метод должен быть реализован в дочерних классах для генерации HTML-кода таблицы
+    /**
+     * Финализированный метод для получения CSS-стилей
+     */
+    final protected function getStyle(): string
+    {
+        return "
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f7f7f7; margin: 0; padding: 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f2f2f2; color: #333; text-transform: uppercase; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:hover { background-color: #f1f1f1; }
+        .age-over-50 { color: red; font-weight: bold; }
+    </style>";
+    }
+
 
     // Метод для фильтрации данных по минимальному возрасту
     protected function filterDataByMinAge($data): array
     {
         return array_filter($data, function ($row) {
-            return isset($row[4]) && (int)$row[4] >= $this->minAge; // Фильтрует данные, оставляя только те строки, где возраст больше или равен минимальному
+            // Предполагаем, что возраст находится в 5-м столбце (индекс 4)
+            return isset($row[4]) && (int)$row[4] >= $this->minAge; // Фильтрация данных по минимальному возрасту
         });
     }
 
-    // Метод для генерации формы фильтрации по минимальному возрасту
-    protected function getFilterForm(): string
+    /**
+     * Генерация формы фильтрации по минимальному возрасту
+     * Общая форма для всех таблиц
+     */
+    final protected function getFilterForm(): string
     {
-        return "<form action='' method='get'>\n" .
-            "<label for='minAge'>Минимальный возраст:</label>\n" .
-            "<input type='number' id='minAge' name='minAge' value='" . htmlspecialchars($this->minAge) . "'>\n" .
-            "<input type='submit' value='Фильтровать'>\n" .
-            "</form>\n";
+        return "<form action='' method='get'>
+                    <label for='minAge'>Минимальный возраст:</label>
+                    <input type='number' id='minAge' name='minAge' value='" . htmlspecialchars($this->minAge) . "'>
+                    <input type='submit' value='Фильтровать'>
+                </form>\n";
     }
+
 
     // Метод для получения заголовков столбцов таблицы
     protected function getTableHeadersHtml(): string
@@ -110,6 +103,7 @@ abstract class AbstractTable implements DataLoaderInterface
         }
         return "<tr>{$headers}</tr>\n";
     }
+
 
     protected function getTableBodyHtml(): string
     {
@@ -130,18 +124,17 @@ abstract class AbstractTable implements DataLoaderInterface
         return "<td>" . htmlspecialchars($cell) . "</td>";
     }
 
-
-
     // Метод для генерации строки таблицы
     protected function generateTableRow(array $row): string
     {
         $html = "<tr>\n";
         foreach ($row as $cellIndex => $cell) {
             $style = '';
-            if ($cellIndex == 4 && (int)$cell > 50) { // Проверка возраста и добавление класса для стилизации
+            // Если возраст больше 50, добавляем класс для стилизации
+            if ($cellIndex == 4 && (int)$cell > 50) {
                 $style = ' class="age-over-50"';
             }
-            $html .= "<td" . $style . ">" . htmlspecialchars($cell) . "</td>\n"; // Добавление ячейки в HTML
+            $html .= "<td{$style}>" . htmlspecialchars($cell) . "</td>\n"; // Экранирование значений
         }
         return $html;
     }

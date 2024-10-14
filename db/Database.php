@@ -1,86 +1,69 @@
 <?php
+
 namespace db;
 
 use config\Config;
 use mysqli;
-use mysqli_stmt;
 use Exception;
 
 // Класс для работы с базой данных
 class Database
 {
-    public ?mysqli $conn; // Свойство для хранения соединения с базой данных
-    private Config $config; // Свойство для хранения объекта конфигурации
+    public ?mysqli $conn;
+    private Config $config;
 
-    // Конструктор класса
     public function __construct(Config $config)
     {
-        $this->config = $config; // Присваивание переданного объекта конфигурации свойству $config
-        $this->conn = $this->getConnection(); // Получение соединения с базой данных и присваивание его свойству $conn
+        $this->config = $config;
+        $this->conn = $this->getConnection();
     }
 
     // Метод для получения соединения с базой данных
-    private function getConnection()
+    public function getConnection(): mysqli
     {
-        $conn = new mysqli($this->config->getServername(), $this->config->getUsername(), $this->config->getPassword(), $this->config->getDbname()); // Создание соединения с базой данных
+        $conn = new mysqli($this->config->getServername(), $this->config->getUsername(), $this->config->getPassword(), $this->config->getDbname());
 
-        if ($conn->connect_error) { // Проверка на ошибку соединения
-            die("Ошибка подключения: " . $conn->connect_error); // Вывод ошибки и завершение скрипта
+        if ($conn->connect_error) {
+            die("Ошибка подключения: " . $conn->connect_error);
         }
-        return $conn; // Возвращение соединения
-    }
-
-    // Метод для выполнения SQL-запросов
-
-    /**
-     * @throws Exception
-     */
-    public function executeSQL($sql, $params = null): false|mysqli_stmt
-    {
-        $stmt = $this->conn->prepare($sql); // Подготовка SQL-запроса
-        if ($params) { // Если переданы параметры
-            $stmt->bind_param($params['types'], ...$params['values']); // Привязка параметров к запросу
-        }
-        if (!$stmt->execute()) { // Выполнение запроса
-            throw new Exception("Ошибка выполнения SQL-запроса: " . $stmt->error); // Выброс исключения в случае ошибки
-        }
-        return $stmt; // Возвращение объекта подготовленного запроса
+        return $conn;
     }
 
     // Метод для получения строк таблицы из базы данных
-    // Используется в методе loadData класса Table
+
     /**
-     * @param int $minAge
-     * @return string
      * @throws Exception
      */
-    public function getTableRows(int $minAge): string
+    public function getTableRows(int $minAge): array
     {
-        $sql = "SELECT * FROM `name` WHERE age >= ?"; // SQL-запрос с параметром для минимального возраста
-        $params = array('types' => 'i', 'values' => array($minAge)); // Параметры для запроса
-        $stmt = $this->executeSQL($sql, $params); // Выполнение запроса
-        $result = $stmt->get_result(); // Получение результата запроса
+        $sql = "SELECT * FROM name WHERE age >= ?";
+        $params = array('types' => 'i', 'values' => array($minAge));
+
+        $stmt = $this->executeSQL($sql, $params);
+        $result = $stmt->get_result();
         $rows = [];
-        while ($row = $result->fetch_assoc()) { // Перебор строк результата
-            $rows[] = $row; // Добавление строки в массив
+
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row; // Добавляем каждую строку как ассоциативный массив в $rows
         }
 
-        $tableHtml = "";
-        foreach ($rows as $row) { // Перебор строк таблицы
-            $ageClass = $row['age'] > 50 ? 'age-over-50' : ''; // Определение класса для возраста
-            $tableHtml .= "<tr>\n";
-            $tableHtml .= "<td>{$row['id']}</td>\n"; // Добавление ячейки с ID
-            $tableHtml .= "<td>{$row['last_name']}</td>\n"; // Добавление ячейки с фамилией
-            $tableHtml .= "<td>{$row['first_name']}</td>\n"; // Добавление ячейки с именем
-            $tableHtml .= "<td>{$row['middle_name']}</td>\n"; // Добавление ячейки с отчеством
-            $tableHtml .= "<td class='{$ageClass}'>{$row['age']}</td>\n"; // Добавление ячейки с возрастом
-            $tableHtml .= "<td><a href='?deleteId={$row['id']}'>Удалить</a></td>\n"; // Добавление ссылки для удаления
-            $tableHtml .= "</tr>\n";
-        }
-        return $tableHtml; // Возвращение сгенерированного HTML-кода таблицы
+        return $rows; // Возвращаем данные как массив
     }
 
-    // Метод для удаления записи по ID
+
+    // Метод для выполнения SQL-запросов
+    public function executeSQL(string $sql, array $params = null): false|\mysqli_stmt
+    {
+        $stmt = $this->conn->prepare($sql);
+        if ($params) {
+            $stmt->bind_param($params['types'], ...$params['values']);
+        }
+
+        if (!$stmt->execute()) {
+            throw new Exception("Ошибка выполнения SQL-запроса: " . $stmt->error);
+        }
+        return $stmt;
+    }
     public function deleteRecord($id): void
     {
         $sql = "DELETE FROM `name` WHERE id = ?"; // SQL-запрос для удаления записи по ID
