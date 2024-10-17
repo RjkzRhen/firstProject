@@ -1,39 +1,32 @@
 <?php
+namespace data; // Определяем пространство имен для класса
 
-namespace data;
+use db\Database as Db; // Импортируем класс Database из пространства имен db и задаем ему псевдоним Db
+use PageInterface; // Импортируем интерфейс PageInterface
 
-use db\Database as Db;
-
-// Класс для работы с таблицами базы данных
-class Table extends AbstractTable
+class Table extends AbstractTable implements PageInterface // Определяем класс Table, который наследует AbstractTable и реализует PageInterface
 {
-    private Db $db; // Свойство для хранения объекта Database
+    private Db $db; // Свойство для хранения объекта базы данных
 
-    public function __construct(Db $db)
+    public function __construct(Db $db) // Конструктор класса, принимает объект базы данных
     {
-        parent::__construct(); // Вызов конструктора родительского класса
-        $this->db = $db; // Присваивание объекта Database
-        $this->loadData($this->db); // Загрузка данных из базы данных
+        $this->db = $db; // Присваиваем объект базы данных свойству класса
+        parent::__construct(); // Вызываем конструктор родительского класса
+        $this->loadData(); // Загружаем данные из базы данных
     }
 
-    public function loadData($source): void
+    public function loadData(): void // Метод для загрузки данных из базы данных
     {
-        $this->data = $this->db->getTableRows($this->minAge); // Загрузка данных как массива
+        $this->data = $this->db->getTableRows($this->minAge); // Получаем строки таблицы из базы данных
     }
 
-    public function getHtml(): string
+    protected function getTableHeaders(): array // Метод для получения заголовков таблицы
     {
-        $html = $this->getHtmlStart(); // Используем общий метод для начальной части HTML-кода
-        $html .= "<table>\n" . $this->getTableHeaders(); // Добавление заголовков таблицы
-        $html .= $this->getFilterForm(); // Используем общий метод для генерации формы фильтрации
+        return ['ID', 'Фамилия', 'Имя', 'Отчество', 'Возраст', 'Действия']; // Возвращаем массив заголовков таблицы
+    }
 
-        foreach ($this->data as $row) {
-            $html .= $this->generateTableRow($row); // Генерация строки таблицы для каждого ряда данных
-            $html .= "<td><a href='?deleteId=" . htmlspecialchars($row['id']) . "'>Удалить</a></td>\n</tr>\n"; // Добавляем ссылку на удаление
-        }
-
-        $html .= "</table>\n"; // Закрытие таблицы
-        $html .= $this->getHtmlEnd(); // Используем общий метод для закрывающей части HTML-кода
-        return $html; // Возвращение сгенерированного HTML-кода
+    protected function getDeleteLink(array $row): string // Метод для получения ссылки на удаление записи
+    {
+        return "?deleteId=" . htmlspecialchars($row['id']); // Возвращаем ссылку на удаление записи
     }
 }

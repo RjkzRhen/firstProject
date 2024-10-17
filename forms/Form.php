@@ -4,18 +4,18 @@ namespace forms;
 use db\Database;
 use PageInterface;
 
-class Form extends AbstractForm {
-protected function getTemplate(): array {
-return [
-['id' => 'last_name', 'name' => 'last_name', 'label' => 'Фамилия', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
-['id' => 'first_name', 'name' => 'first_name', 'label' => 'Имя', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
-['id' => 'middle_name', 'name' => 'middle_name', 'label' => 'Отчество', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
-['id' => 'age', 'name' => 'age', 'label' => 'Возраст', 'type' => 'number', 'value' => '', 'required' => true, 'isValid' => true]
-]; // Возвращение шаблона полей формы
-}
+class Form extends AbstractForm implements PageInterface {
+    protected function getTemplate(): array {
+        return [
+            ['id' => 'last_name', 'name' => 'last_name', 'label' => 'Фамилия', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
+            ['id' => 'first_name', 'name' => 'first_name', 'label' => 'Имя', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
+            ['id' => 'middle_name', 'name' => 'middle_name', 'label' => 'Отчество', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
+            ['id' => 'age', 'name' => 'age', 'label' => 'Возраст', 'type' => 'number', 'value' => '', 'required' => true, 'isValid' => true]
+        ]; // Возвращение шаблона полей формы
+    }
 
-public function getHtml(): string {
-$html = '<!DOCTYPE html><html lang="en"><head>
+    public function getHtml(): string {
+        $html = '<!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <title>Добавление пользователя</title>
     <style type="text/css">
@@ -31,13 +31,13 @@ $html = '<!DOCTYPE html><html lang="en"><head>
 </head>
 <body>
 <form action="/form" method="post" id="userForm">';
-    foreach ($this->fields as $field) { // Перебор всех полей формы
-    $class = $field['isValid'] ? "req" : "error"; // Определение класса для поля в зависимости от валидности
-    $html .= '<label for="' . $field['id'] . '">' . $field['label'] . ':</label>'; // Добавление метки для поля
-    $html .= '<input type="' . $field['type'] . '" id="' . $field['id'] . '" name="' . $field['name'] . '" value="' . $field['value'] .'" class="'.$class.'"><br>'; // Добавление поля ввода
+        foreach ($this->fields as $field) { // Перебор всех полей формы
+            $class = $field['isValid'] ? "req" : "error"; // Определение класса для поля в зависимости от валидности
+            $html .= '<label for="' . $field['id'] . '">' . $field['label'] . ':</label>'; // Добавление метки для поля
+            $html .= '<input type="' . $field['type'] . '" id="' . $field['id'] . '" name="' . $field['name'] . '" value="' . $field['value'] .'" class="'.$class.'"><br>'; // Добавление поля ввода
+        }
+        $html .= '<input type="submit" name="submit" value="Добавить пользователя" id="button">'; // Добавление кнопки отправки формы
+        $html .= '</form></body></html>';
+        return $html; // Возвращение сгенерированного HTML
     }
-    $html .= '<input type="submit" name="submit" value="Добавить пользователя" id="button">'; // Добавление кнопки отправки формы
-    $html .= '</form></body></html>';
-return $html; // Возвращение сгенерированного HTML
-}
 }

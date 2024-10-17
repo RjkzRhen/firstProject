@@ -1,28 +1,13 @@
 <?php
 
-namespace config;
-class Config
-{
+namespace config; class Config {
 
 
-    private string $servername;
-    private string $username;
-    private string $password;
-    private string $dbname;
+    private string $servername; private string $username; private string $password; private string $dbname;
 
-    /**
-     * @throws \Exception
-     */
-    public function __construct($filename)
-    {
-        $iniFile = parse_ini_file($filename, true);
-        if ($iniFile === false) {
-            throw new \Exception("Unable to read configuration file: " . $filename);
+    /** * @throws \Exception */ public function __construct($filename) { $iniFile = parse_ini_file($filename, true); if ($iniFile === false) { throw new \Exception("Unable to read configuration file: " . $filename);
         }
-        $this->servername = $iniFile['servername'];
-        $this->username = $iniFile['username'];
-        $this->password = $iniFile['password'];
-        $this->dbname = $iniFile['dbname'];
+        $this->servername = $iniFile['servername']; $this->username = $iniFile['username']; $this->password = $iniFile['password']; $this->dbname = $iniFile['dbname'];
     }
 
     public function getServername(): string
@@ -43,5 +28,11 @@ class Config
     public function getDbname(): string
     {
         return $this->dbname;
+    }
+
+
+    public static function getProjectDir(): string
+    {
+        return dirname(__DIR__);
     }
 }

@@ -1,53 +1,66 @@
 <?php
-namespace data;
+namespace data; // Определяем пространство имен для класса
 
-use Exception;
-use PageInterface;
+use Exception; // Импортируем класс Exception для обработки исключений
+use PageInterface; // Импортируем интерфейс PageInterface
 
-// Класс для работы с CSV-таблицами
-class CSVTable extends AbstractTable {
-
+class CSVTable extends AbstractTable implements PageInterface // Определяем класс CSVTable, который наследует AbstractTable и реализует PageInterface
+{
     private CSVEditor $csvEditor; // Свойство для хранения объекта CSVEditor
-    private CSVLoader $csvLoader; // Свойство для хранения объекта CSVLoader
+    private string $filePath; // Свойство для хранения пути к CSV-файлу
 
-    public function __construct(CSVLoader $csvLoader)
+    public function __construct($filePath) // Конструктор класса, принимает путь к CSV-файлу
     {
-        parent::__construct(); // Вызов конструктора родительского класса
-        $this->csvLoader = $csvLoader; // Присваивание переданного объекта CSVLoader свойству $csvLoader
-        $this->loadData(); // Загрузка данных из CSV-файла
-        $this->csvEditor = new CSVEditor($csvLoader->getFilePath()); // Создание объекта CSVEditor с использованием пути к CSV-файлу
+        $this->filePath = $filePath; // Присваиваем путь к CSV-файлу свойству класса
+        $this->csvEditor = new CSVEditor($filePath); // Создаем объект CSVEditor
+        $this->minAge = isset($_GET['minAge']) ? (int)$_GET['minAge'] : 0; // Получаем минимальный возраст из GET-параметра или устанавливаем его в 0
+
+        parent::__construct(); // Вызываем конструктор родительского класса
     }
 
-    /**
-     * @throws Exception
-     */
-    public function loadData(): void
+    public function loadData(): void // Метод для загрузки данных из CSV-файла
     {
-        $this->data = $this->csvLoader->loadData(); // Загрузка данных из CSV-файла
-    }
-
-    public function getHtml(): string
-    {
-        $html = $this->getHtmlStart(); // Используем общий метод для начальной части HTML-кода
-        $html .= "<table>\n" . $this->getTableHeaders(); // Добавление заголовков таблицы
-        $html .= $this->getFilterForm(); // Используем общий метод для генерации формы фильтрации
-
-        $filteredData = $this->filterDataByMinAge($this->data); // Фильтрация данных по минимальному возрасту
-
-        foreach ($filteredData as $index => $row) {
-            if ($index == 0) continue; // Пропуск первой строки (заголовков)
-            $html .= $this->generateTableRow($row); // Генерация строки таблицы
-            $username = htmlspecialchars($row[0]); // Получение имени пользователя
-            $html .= "<td><a href='?delete_username={$username}'>Удалить</a></td>\n</tr>\n"; // Добавление ссылки для удаления
+        if (!file_exists($this->filePath)) { // Проверяем существование файла
+            throw new Exception("Файл не найден: " . $this->filePath); // Выбрасываем исключение, если файл не найден
         }
-        $html .= "</table>\n"; // Закрытие таблицы
-        $html .= $this->getHtmlEnd(); // Используем общий метод для закрывающей части HTML-кода
-        return $html; // Возвращение сгенерированного HTML-кода
+
+        $handle = fopen($this->filePath, 'rb'); // Открываем CSV-файл для чтения
+        if ($handle === false) { // Проверяем ошибку открытия файла
+            throw new Exception("Ошибка при открытии файла: " . $this->filePath); // Выбрасываем исключение в случае ошибки
+        }
+
+        $this->data = []; // Инициализируем массив для хранения данных
+        $firstLine = true; // Флаг для пропуска первой строки
+        while (($line = fgetcsv($handle, 1000, ";")) !== false) { // Читаем строки из CSV-файла
+            if ($firstLine) { // Пропускаем первую строку
+                $firstLine = false;
+                continue;
+            }
+            $line = array_map([$this, 'convertEncoding'], $line); // Преобразуем кодировку строки
+            $this->data[] = $line; // Добавляем строку в массив данных
+        }
+        fclose($handle); // Закрываем файл
     }
 
-    public function deleteByUsername($username): void
+    protected function convertEncoding($value): array|false|string|null // Метод для преобразования кодировки значения
     {
-        $this->csvEditor->deleteByUsername($username); // Удаление записи по имени пользователя
-        $this->loadData(); // Перезагрузка данных после удаления
+        return mb_convert_encoding($value, 'UTF-8', 'auto'); // Возвращаем значение, преобразованное в UTF-8
+    }
+
+    public function deleteByUsername($username): void // Метод для удаления записи по имени пользователя
+    {
+        $this->csvEditor->deleteByUsername($username); // Удаляем запись по имени пользователя
+        $this->loadData(); // Перезагружаем данные из CSV-файла
+    }
+
+    protected function getTableHeaders(): array // Метод для получения заголовков таблицы
+    {
+        return ['ID', 'Фамилия', 'Имя', 'Отчество', 'Возраст', 'Действия']; // Возвращаем массив заголовков таблицы
+    }
+
+    protected function getDeleteLink(array $row): string // Метод для получения ссылки на удаление записи
+    {
+        $id = $row['id'] ?? ''; // Проверяем на null и присваиваем пустую строку, если значение null
+        return "?deleteId=" . htmlspecialchars($id, ENT_QUOTES, 'UTF-8'); // Возвращаем ссылку на удаление записи
     }
 }

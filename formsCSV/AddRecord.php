@@ -6,15 +6,15 @@ use db\Database;
 use formsCSV\CSVWriter;
 use PageInterface;
 
-class AddRecord extends AbstractForm  {
+class AddRecord extends AbstractForm implements PageInterface {
     protected function getTemplate(): array {
         return [
-            ['id' => 'username', 'name' => 'username', 'label' => 'Имя пользователя', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
-            ['id' => 'lastname', 'name' => 'lastname', 'label' => 'Фамилия', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
-            ['id' => 'firstname', 'name' => 'firstname', 'label' => 'Имя', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
-            ['id' => 'middlename', 'name' => 'middlename', 'label' => 'Отчество', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
-            ['id' => 'age', 'name' => 'age', 'label' => 'Возраст', 'type' => 'number', 'value' => '', 'required' => true, 'isValid' => true]
-        ]; // Возвращение шаблона полей формы
+            ['id' => 'username', 'name' => 'username', 'label' => 'РРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
+            ['id' => 'lastname', 'name' => 'lastname', 'label' => 'Р¤Р°РјРёР»РёСЏ', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
+            ['id' => 'firstname', 'name' => 'firstname', 'label' => 'РРјСЏ', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
+            ['id' => 'middlename', 'name' => 'middlename', 'label' => 'РћС‚С‡РµСЃС‚РІРѕ', 'type' => 'text', 'value' => '', 'required' => true, 'isValid' => true],
+            ['id' => 'age', 'name' => 'age', 'label' => 'Р’РѕР·СЂР°СЃС‚', 'type' => 'number', 'value' => '', 'required' => true, 'isValid' => true]
+        ]; // Р’РѕР·РІСЂР°С‰РµРЅРёРµ С€Р°Р±Р»РѕРЅР° РїРѕР»РµР№ С„РѕСЂРјС‹
     }
 
     public function getHtml(): string {
@@ -36,8 +36,8 @@ class AddRecord extends AbstractForm  {
 <body>
     <form method="post">';
 
-        foreach ($this->fields as $field) { // Перебор полей для создания элементов формы.
-            $class = $field['isValid'] ? "req" : "error";  // Применение класса в зависимости от валидности.
+        foreach ($this->fields as $field) { // РџРµСЂРµР±РѕСЂ РїРѕР»РµР№ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ СЌР»РµРјРµРЅС‚РѕРІ С„РѕСЂРјС‹.
+            $class = $field['isValid'] ? "req" : "error";  // РџСЂРёРјРµРЅРµРЅРёРµ РєР»Р°СЃСЃР° РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ РІР°Р»РёРґРЅРѕСЃС‚Рё.
             $html .= '<label for="' . $field['name'] . '">' . ucfirst($field['name']) . ':</label>';
             $html .= '<input type="text" name="' . $field['name'] . '" value="' . htmlspecialchars($field['value']) . '" class="' . $class . '"><br>';
         }
@@ -47,6 +47,6 @@ class AddRecord extends AbstractForm  {
 </body>
 </html>';
 
-        return $html; // Возвращение сгенерированного HTML кода.
+        return $html; // Р’РѕР·РІСЂР°С‰РµРЅРёРµ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅРЅРѕРіРѕ HTML РєРѕРґР°.
     }
 }
