@@ -1,4 +1,4 @@
-<?php
+(не понадобился)
 $inputFile = 'otherFiles/OpenDocument.csv';
 $outputFile = 'otherFiles/OpenDocument_utf8.csv';
 
