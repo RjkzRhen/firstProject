@@ -18,6 +18,7 @@ class Table extends AbstractTable implements PageInterface // Определяе
     public function loadData(): void // Метод для загрузки данных из базы данных
     {
         $this->data = $this->db->getTableRows($this->minAge); // Получаем строки таблицы из базы данных
+
     }
 
     protected function getTableHeaders(): array // Метод для получения заголовков таблицы
