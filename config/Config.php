@@ -2,7 +2,6 @@
 
 namespace config; class Config {
 
-
     private string $servername; private string $username; private string $password; private string $dbname;
 
     /** * @throws \Exception */ public function __construct($filename) { $iniFile = parse_ini_file($filename, true); if ($iniFile === false) { throw new \Exception("Unable to read configuration file: " . $filename);
@@ -29,7 +28,6 @@ namespace config; class Config {
     {
         return $this->dbname;
     }
-
 
     public static function getProjectDir(): string
     {

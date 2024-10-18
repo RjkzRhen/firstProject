@@ -24,9 +24,11 @@ abstract class AbstractTable implements DataLoaderInterface // Определя�
         return str_replace([ // Заменяем переменные в шаблоне
             '{{ style }}',
             '{{ table }}',
+            '{{ minAge }}'
         ], [
             $this->getStyle(),
             $this->getHtmlTable(),
+            htmlspecialchars($this->minAge)
         ], $htmlTemplate);
     }
 
@@ -53,6 +55,12 @@ abstract class AbstractTable implements DataLoaderInterface // Определя�
         </style>";
     }
 
+    protected function filterDataByMinAge(array $data): array
+    {
+        return array_filter($data, function ($row) {
+            return isset($row[4]) && (int)$row[4] >= $this->minAge;
+        });
+    }
     protected function getTableHeadersHtml(): string // Метод для получения HTML-кода заголовков таблицы
     {
         $headers = ''; // Инициализируем строку для заголовков

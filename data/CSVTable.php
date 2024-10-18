@@ -40,6 +40,8 @@ class CSVTable extends AbstractTable implements PageInterface // Определ�
             $this->data[] = $line; // Добавляем строку в массив данных
         }
         fclose($handle); // Закрываем файл
+        $this->data = $this->filterDataByMinAge($this->data);
+
     }
 
     protected function convertEncoding($value): array|false|string|null // Метод для преобразования кодировки значения

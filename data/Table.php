@@ -13,12 +13,12 @@ class Table extends AbstractTable implements PageInterface // Определяе
         $this->db = $db; // Присваиваем объект базы данных свойству класса
         parent::__construct(); // Вызываем конструктор родительского класса
         $this->loadData(); // Загружаем данные из базы данных
+        $this->filterDataByMinAge($this->data);
     }
 
     public function loadData(): void // Метод для загрузки данных из базы данных
     {
         $this->data = $this->db->getTableRows($this->minAge); // Получаем строки таблицы из базы данных
-
     }
 
     protected function getTableHeaders(): array // Метод для получения заголовков таблицы
