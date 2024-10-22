@@ -14,7 +14,6 @@ abstract class AbstractTable implements DataLoaderInterface // Определя�
         $this->loadData(); // Загружаем данные
     }
 
-    abstract public function loadData(): void; // Объявляем абстрактный метод loadData
     abstract protected function getTableHeaders(): array; // Объявляем абстрактный метод getTableHeaders
     abstract protected function getDeleteLink(array $row): string; // Объявляем абстрактный метод getDeleteLink
 
@@ -61,6 +60,7 @@ abstract class AbstractTable implements DataLoaderInterface // Определя�
             return isset($row[4]) && (int)$row[4] >= $this->minAge;
         });
     }
+
     protected function getTableHeadersHtml(): string // Метод для получения HTML-кода заголовков таблицы
     {
         $headers = ''; // Инициализируем строку для заголовков
@@ -73,30 +73,30 @@ abstract class AbstractTable implements DataLoaderInterface // Определя�
     protected function getTableBodyHtml(): string // Метод для получения HTML-кода тела таблицы
     {
         $html = ''; // Инициализируем строку для тела таблицы
-        foreach ($this->data as $row) { // Перебираем строки данных
-            $html .= $this->generateTableRow($row); // Генерируем HTML-код для строки
+        foreach ($this->data as $rowIndex => $row) { // Перебираем строки данных
+            $html .= $this->generateTableRow($rowIndex, array_values($row)); // Генерируем HTML-код для строки
         }
         return $html; // Возвращаем HTML-код тела таблицы
     }
 
-    protected function generateTableRow(array $row): string // Метод для генерации HTML-кода строки таблицы
+    protected function generateTableRow(int $rowIndex, array $row): string // Метод для генерации HTML-кода строки таблицы
     {
         $html = "<tr>\n"; // Начинаем строку таблицы
         foreach ($row as $cellIndex => $cell) { // Перебираем ячейки строки
-            $html .= $this->generateTableCell($cellIndex, $cell, true); // Генерируем HTML-код для ячейки
+            $html .= $this->generateTableCell($rowIndex, $cellIndex, $cell, true); // Генерируем HTML-код для ячейки
         }
         $html .= "<td><a href='{$this->getDeleteLink($row)}'>Удалить</a></td>\n"; // Добавляем ссылку "Удалить"
         $html .= "</tr>\n"; // Заканчиваем строку таблицы
         return $html; // Возвращаем HTML-код строки таблицы
     }
 
-    protected function generateTableCell(mixed $cellIndex, mixed $cell, bool $addAgeClass = false): string // Метод для генерации HTML-кода ячейки таблицы
+    protected function generateTableCell(int $rowIndex, int $cellIndex, mixed $cell, bool $addAgeClass = false): string // Метод для генерации HTML-кода ячейки таблицы
     {
         $class = ''; // Инициализируем строку для класса
         if ($addAgeClass && $cellIndex === 4 && (int)$cell > 50) { // Проверяем условия для добавления класса age-over-50
             $class = ' class="age-over-50"'; // Добавляем класс age-over-50
         }
-        return "<td{$class}>" . htmlspecialchars($cell) . "</td>"; // Возвращаем HTML-код ячейки таблицы
+        return "<td{$class}>" . htmlspecialchars($cell, ENT_QUOTES, 'UTF-8') . "</td>"; // Возвращаем HTML-код ячейки таблицы
     }
 
     protected function convertEncoding($value): array|false|string|null // Метод для преобразования кодировки значения

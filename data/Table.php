@@ -28,6 +28,7 @@ class Table extends AbstractTable implements PageInterface // Определяе
 
     protected function getDeleteLink(array $row): string // Метод для получения ссылки на удаление записи
     {
-        return "?deleteId=" . htmlspecialchars($row['id']); // Возвращаем ссылку на удаление записи
+        $id = $row['id'] ?? ''; // Проверяем на null и присваиваем пустую строку, если значение null
+        return "?deleteId=" . htmlspecialchars($id, ENT_QUOTES, 'UTF-8'); // Возвращаем ссылку на удаление записи
     }
 }
