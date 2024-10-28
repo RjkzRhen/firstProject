@@ -1,5 +1,4 @@
 <?php
-
 namespace db; // Определяем пространство имен для класса
 
 use config\Config; // Импортируем класс Config из пространства имен config
@@ -50,6 +49,23 @@ class Database
         return $rows; // Возвращаем массив строк
     }
 
+    // Метод для получения строк таблицы phone из базы данных
+    public function getPhoneTableRows(): array
+    {
+        $sql = "SELECT p.id, CONCAT(n.last_name, ' ', n.first_name, ' ', n.middle_name) AS full_name, p.value 
+            FROM phone p
+            JOIN name n ON p.user_id = n.id";
+        $stmt = $this->executeSQL($sql);
+        $result = $stmt->get_result();
+        $rows = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $rows[] = $row;
+        }
+
+        return $rows;
+    }
+
     // Метод для выполнения SQL-запросов
     public function executeSQL(string $sql, array $params = null): false|\mysqli_stmt
     {
@@ -63,6 +79,7 @@ class Database
         }
         return $stmt; // Возвращаем объект подготовленного запроса
     }
+
     public function deleteRecord($id): void
     {
         $sql = "DELETE FROM `name` WHERE id = ?"; // SQL-запрос для удаления записи по ID

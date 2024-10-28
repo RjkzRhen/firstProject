@@ -6,10 +6,12 @@ require 'vendor/autoload.php'; // Подключение автозагрузчика зависимостей
 use config\Config;
 use data\HomePage;
 use data\Table;
+use data\PhoneTable; // Добавляем новый класс
 use db\Database;
 use data\CSVTable;
 use formsCSV\AddRecord;
 use forms\Form;
+use forms\PhoneForm; // Добавляем новый класс
 
 /**
  * @throws Exception
@@ -17,15 +19,16 @@ use forms\Form;
 function router(string $uri): PageInterface {
     $config = new Config('config.ini'); // Создание объекта конфигурации
     $database = new Database($config); // Создание объекта базы данных с использованием конфигурации
-    $csvEditor = new \data\CSVEditor('otherFiles/OpenDocument.csv'); // Создание объекта для работы с CSV-файлом
     $addRecordPage = new AddRecord($database, 'otherFiles/OpenDocument.csv'); // Создание объекта для добавления записи в CSV-файл
 
     return match ($uri) {
         '/table' => new Table(new Database(new Config('config.ini'))), // Создание объекта таблицы с использованием базы данных
+        '/phone' => new PhoneTable(new Database(new Config('config.ini'))), // Добавляем новый маршрут
         '/csv' => new CSVTable('otherFiles/OpenDocument.csv'), // Создание объекта таблицы для CSV-файла
         '/' => new HomePage(), // Создание объекта домашней страницы
         '/form' => new Form(new Database(new Config('config.ini'))), // Создание объекта формы с использованием базы данных
         '/add_record' => $addRecordPage, // Создание объекта для добавления записи в CSV-файл
+        '/phone_form' => new PhoneForm(new Database(new Config('config.ini'))), // Добавляем новый маршрут для формы PhoneForm
         default => new NotFoundHttp() // Создание объекта страницы 404
     };
 }
