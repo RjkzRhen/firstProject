@@ -61,6 +61,7 @@ class PhoneForm extends AbstractForm implements PageInterface {
                 $users[] = $row; // Добавляем пользователя в массив
             }
         }
+
         return $users; // Возвращаем массив пользователей
     }
     // Метод для вставки данных в таблицу phone

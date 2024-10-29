@@ -16,7 +16,6 @@ class Database
         $this->config = $config; // Присваиваем объект конфигурации свойству класса
         $this->conn = $this->getConnection(); // Получаем соединение с базой данных
     }
-
     // Метод для получения соединения с базой данных
     public function getConnection(): mysqli
     {
@@ -27,9 +26,7 @@ class Database
         }
         return $conn; // Возвращаем соединение с базой данных
     }
-
     // Метод для получения строк таблицы из базы данных
-
     /**
      * @throws Exception
      */
@@ -48,7 +45,6 @@ class Database
 
         return $rows; // Возвращаем массив строк
     }
-
     // Метод для получения строк таблицы phone из базы данных
     public function getPhoneTableRows(): array
     {
@@ -65,7 +61,6 @@ class Database
 
         return $rows;
     }
-
     // Метод для выполнения SQL-запросов
     public function executeSQL(string $sql, array $params = null): false|\mysqli_stmt
     {
@@ -79,7 +74,6 @@ class Database
         }
         return $stmt; // Возвращаем объект подготовленного запроса
     }
-
     public function deleteRecord($id): void
     {
         $sql = "DELETE FROM `name` WHERE id = ?"; // SQL-запрос для удаления записи по ID
